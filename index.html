@@ -352,16 +352,10 @@
   .day-body.open { display: block; }
 
   /* STOP ITEM */
-  .stop-item {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 0 1rem;
-    margin-bottom: 1.25rem;
-    position: relative;
-  }
+  /* stop-item defined below with photo support */
   .stop-item::before {
     content: ''; position: absolute;
-    left: 23px; top: 48px; bottom: -12px;
+    left: 23px; top: 52px; bottom: -12px;
     width: 1px; background: var(--cream-dark);
   }
   .stop-item:last-child::before { display: none; }
@@ -390,11 +384,7 @@
   }
 
   .stop-content { padding-top: 4px; }
-  .stop-name {
-    font-family: var(--font-display);
-    font-size: 18px; font-weight: 600;
-    color: var(--ink); margin-bottom: 3px;
-  }
+  /* stop-name styled as anchor — see link styles above */
   .stop-desc {
     font-size: 13px; color: var(--ink-light);
     line-height: 1.6; margin-bottom: 6px;
@@ -426,7 +416,7 @@
     transition: border-color 0.2s;
   }
   .restaurant-card:hover { border-color: var(--gold); }
-  .restaurant-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  /* restaurant-name styled as anchor — see link styles above */
   .restaurant-type { font-size: 12px; color: var(--ink-light); margin-bottom: 4px; }
   .restaurant-stars { color: var(--gold); font-size: 12px; }
   .restaurant-price { font-size: 12px; color: var(--sage); font-weight: 500; }
@@ -503,7 +493,52 @@
   }
   footer strong { font-family: var(--font-display); font-size: 18px; font-weight: 300; font-style: italic; }
 
-  /* SCROLL ANIMATION */
+  .stop-photo {
+    display: none;
+  }
+  .stop-item {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 0 1rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    align-items: start;
+  }
+  a.stop-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 3px;
+    transition: color 0.2s;
+  }
+  a.stop-name:hover { color: var(--rouge); }
+  a.restaurant-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 2px;
+    transition: color 0.2s;
+  }
+  a.restaurant-name:hover { color: var(--rouge); }
+  .ext-icon {
+    font-size: 11px;
+    color: var(--gold);
+    font-family: var(--font-body);
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  @media (max-width: 540px) {
+    .stop-item { grid-template-columns: 44px 1fr; }
+  }
   .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .fade-in.visible { opacity: 1; transform: none; }
 
@@ -714,66 +749,201 @@ async function generateItinerary() {
   const budgetLabel = { budget: 'Budget', mid: 'Mid-range', luxury: 'Luxury' }[budget];
   const groupLabel = { solo: 'Solo', couple: 'Couple', friends: 'Friends', family: 'Family' }[group];
 
-  // Stops per day based on pace
-  const stopsCount = { relaxed: 3, balanced: 4, intensive: 5 }[pace] || 4;
-
-  // Map interest values to concrete place categories the AI must include
-  const interestMap = {
-    art:          'art galleries, contemporary art spaces, street art',
-    food:         'food markets, patisseries, local bistros, culinary experiences',
-    architecture: 'iconic buildings, Haussmann architecture, bridges, façades',
-    shopping:     'boutiques, concept stores, flea markets, designer shops',
-    parks:        'gardens, parks, riverside walks',
-    nightlife:    'cocktail bars, wine bars, jazz clubs',
-    history:      'historical monuments, plaques, palaces, cemeteries',
-    fashion:      'fashion boutiques, flagship stores, fashion districts like Le Marais',
-    cinema:       'cinemas, cultural centres, independent bookshops'
+  const STOPS = {
+    art: [
+      { name: "Musée d'Orsay", type: "sight", description: "World's finest Impressionist collection in a stunning railway station", tags: ["Impressionism", "Masterpieces"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Musee_d_Orsay_from_opposite_bank_of_the_Seine.jpg/640px-Musee_d_Orsay_from_opposite_bank_of_the_Seine.jpg" },
+      { name: "Centre Pompidou", type: "sight", description: "Bold modern art museum with iconic inside-out architecture", tags: ["Modern Art", "Architecture"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Centre_Georges_Pompidou_2.jpg/640px-Centre_Georges_Pompidou_2.jpg" },
+      { name: "Musée Picasso", type: "sight", description: "Picasso's life work in a gorgeous 17th-century Marais mansion", tags: ["Picasso", "Classic"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Paris_75003_Rue_de_Thorigny_05a_H%C3%B4tel_Sal%C3%A9.jpg/640px-Paris_75003_Rue_de_Thorigny_05a_H%C3%B4tel_Sal%C3%A9.jpg" },
+      { name: "Palais de Tokyo", type: "sight", description: "Europe's largest contemporary art space — raw and experimental", tags: ["Contemporary", "Experimental"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Palais_de_Tokyo.jpg/640px-Palais_de_Tokyo.jpg" },
+      { name: "Galerie Perrotin", type: "sight", description: "Top contemporary gallery in Le Marais showing global artists", tags: ["Gallery", "Contemporary"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
+      { name: "Atelier des Lumières", type: "sight", description: "Immersive digital art projections in a former iron foundry", tags: ["Immersive", "Digital Art"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Atelier_des_lumi%C3%A8res_Paris.jpg/640px-Atelier_des_lumi%C3%A8res_Paris.jpg" },
+    ],
+    food: [
+      { name: "Marché d'Aligre", type: "food", description: "Paris's most authentic food market — cheese, bread, charcuterie", tags: ["Market", "Local"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Marche_Aligre_Paris.jpg/640px-Marche_Aligre_Paris.jpg" },
+      { name: "Du Pain et des Idées", type: "food", description: "Legendary bakery with the city's finest croissants and escargot pastry", tags: ["Bakery", "Pastry"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Du_pain_et_des_id%C3%A9es%2C_exterior%2C_Paris.jpg/640px-Du_pain_et_des_id%C3%A9es%2C_exterior%2C_Paris.jpg" },
+      { name: "Marché des Enfants Rouges", type: "food", description: "Paris's oldest covered market — street food from around the world", tags: ["Covered Market", "Street Food"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/March%C3%A9_des_Enfants_Rouges_Paris.jpg/640px-March%C3%A9_des_Enfants_Rouges_Paris.jpg" },
+      { name: "Rue Montorgueil", type: "food", description: "Pedestrian food street packed with fromageries and charcuteries", tags: ["Food Street", "Gourmet"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Rue_Montorgueil_Paris.jpg/640px-Rue_Montorgueil_Paris.jpg" },
+      { name: "Stohrer Pâtisserie", type: "food", description: "Paris's oldest pastry shop, founded 1730 — historic and delicious", tags: ["Historic", "Pastry"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Stohrer_boulangerie_rue_Montorgueil.jpg/640px-Stohrer_boulangerie_rue_Montorgueil.jpg" },
+      { name: "Frenchie Bar à Vins", type: "food", description: "Acclaimed small plates and wine in an intimate Rue du Nil setting", tags: ["Wine Bar", "Gourmet"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Rue_du_Nil_Paris.jpg/640px-Rue_du_Nil_Paris.jpg" },
+    ],
+    architecture: [
+      { name: "Eiffel Tower", type: "sight", description: "The iron lady at dawn — crowds minimal, light spectacular", tags: ["Iconic", "Iron"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/640px-Tour_Eiffel_Wikimedia_Commons.jpg" },
+      { name: "Opéra Garnier", type: "sight", description: "Paris's most opulent building — gilded interiors and grand staircase", tags: ["Baroque", "Opulent"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Paris_Opera_full_frontal_architecture%2C_May_2011.jpg/640px-Paris_Opera_full_frontal_architecture%2C_May_2011.jpg" },
+      { name: "Sainte-Chapelle", type: "sight", description: "Gothic jewel with 15 floor-to-ceiling medieval stained glass windows", tags: ["Gothic", "Stained Glass"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Sainte_Chapelle_-_Upper_Level.jpg/640px-Sainte_Chapelle_-_Upper_Level.jpg" },
+      { name: "Pont Alexandre III", type: "sight", description: "Paris's most ornate bridge — golden statues and art nouveau lamps", tags: ["Bridge", "Art Nouveau"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Pont_Alexander_III_from_Pont_de_la_Concorde%2C_Paris_June_2015.jpg/640px-Pont_Alexander_III_from_Pont_de_la_Concorde%2C_Paris_June_2015.jpg" },
+      { name: "Passages Couverts", type: "sight", description: "19th-century glass-roofed shopping arcades — a vanishing Paris", tags: ["19th Century", "Arcades"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Galerie_Vivienne_Paris.jpg/640px-Galerie_Vivienne_Paris.jpg" },
+      { name: "Institut du Monde Arabe", type: "sight", description: "Jean Nouvel's mashrabiya façade that responds to sunlight", tags: ["Jean Nouvel", "Modern"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Institut_du_Monde_Arabe%2C_Paris.jpg/640px-Institut_du_Monde_Arabe%2C_Paris.jpg" },
+    ],
+    shopping: [
+      { name: "Le Marais Boutiques", type: "shop", description: "Rue des Francs-Bourgeois packed with independent concept stores", tags: ["Concept Stores", "Trendy"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Rue_des_Francs-Bourgeois_Paris.jpg/640px-Rue_des_Francs-Bourgeois_Paris.jpg" },
+      { name: "Merci Concept Store", type: "shop", description: "Paris's most curated concept store — fashion, design, books, café", tags: ["Concept Store", "Design"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
+      { name: "Marché aux Puces de Saint-Ouen", type: "shop", description: "World's largest antique market — 2,500 dealers across 7 markets", tags: ["Antiques", "Vintage"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Marche_aux_puces_de_Saint-Ouen.jpg/640px-Marche_aux_puces_de_Saint-Ouen.jpg" },
+      { name: "Galeries Lafayette", type: "shop", description: "Iconic department store under a magnificent art nouveau dome", tags: ["Department Store", "Iconic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Galeries_Lafayette_Paris.jpg/640px-Galeries_Lafayette_Paris.jpg" },
+      { name: "Rue du Faubourg Saint-Honoré", type: "shop", description: "The world's most exclusive shopping street — Hermès to Chanel", tags: ["Luxury", "Flagship"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Faubourg_Saint-Honor%C3%A9.jpg/640px-Faubourg_Saint-Honor%C3%A9.jpg" },
+      { name: "La Vallée Village", type: "shop", description: "Designer outlet village — up to 60% off luxury brands", tags: ["Outlet", "Designer"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Vallee_Village.jpg/640px-La_Vallee_Village.jpg" },
+    ],
+    fashion: [
+      { name: "Le Marais Fashion Walk", type: "shop", description: "Epicentre of Paris cool — Isabel Marant, A.P.C., and more", tags: ["Designer", "Cool"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Rue_des_Francs-Bourgeois_Paris.jpg/640px-Rue_des_Francs-Bourgeois_Paris.jpg" },
+      { name: "Palais Royal Arcades", type: "shop", description: "Rick Owens, Comme des Garçons, Stella McCartney under the arches", tags: ["Avant-garde", "Luxury"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Paris_Palais_Royal_Jardins.JPG/640px-Paris_Palais_Royal_Jardins.JPG" },
+      { name: "Rue du Cherche-Midi", type: "shop", description: "Saint-Germain's fashion street — Sandro, Maje, & Other Stories", tags: ["Parisian", "Chic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Rue_du_Cherche-Midi_Paris.jpg/640px-Rue_du_Cherche-Midi_Paris.jpg" },
+      { name: "Musée Galliera", type: "sight", description: "Paris's fashion museum in a beautiful 19th-century palace", tags: ["Fashion History", "Museum"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Palais_Galliera_2012.jpg/640px-Palais_Galliera_2012.jpg" },
+      { name: "Broken Arm Concept Store", type: "shop", description: "Hyper-curated store blending fashion, art books, and coffee", tags: ["Curated", "Concept"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
+      { name: "Porte de Vanves Flea Market", type: "shop", description: "Best flea market for vintage fashion — arrive early for finds", tags: ["Vintage", "Flea Market"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Marche_aux_puces_de_Saint-Ouen.jpg/640px-Marche_aux_puces_de_Saint-Ouen.jpg" },
+    ],
+    parks: [
+      { name: "Jardin du Luxembourg", type: "park", description: "Paris's most beloved park — chess, fountains, and Sunday crowds", tags: ["Gardens", "Serene"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Jardin_du_Luxembourg%2C_Paris_October_2010.jpg/640px-Jardin_du_Luxembourg%2C_Paris_October_2010.jpg" },
+      { name: "Parc des Buttes-Chaumont", type: "park", description: "Dramatic rocky park with island temple and panoramic city views", tags: ["Dramatic", "Views"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Buttes_Chaumont_-_temple.jpg/640px-Buttes_Chaumont_-_temple.jpg" },
+      { name: "Promenade Plantée", type: "park", description: "World's first elevated park — built on a disused railway viaduct", tags: ["Elevated", "Unique"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Promenade_plantee_-_Paris_%28France%29.jpg/640px-Promenade_plantee_-_Paris_%28France%29.jpg" },
+      { name: "Jardin des Plantes", type: "park", description: "Historic botanical garden with greenhouses and a small zoo", tags: ["Botanical", "Historic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Jardin_des_plantes_2010.jpg/640px-Jardin_des_plantes_2010.jpg" },
+      { name: "Square du Vert-Galant", type: "park", description: "Romantic tip of Île de la Cité with Seine views on both sides", tags: ["Romantic", "Seine"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Ile_de_la_cite_1.jpg/640px-Ile_de_la_cite_1.jpg" },
+      { name: "Bois de Boulogne", type: "park", description: "Vast western forest with lakes, cycling paths, and picnic spots", tags: ["Forest", "Cycling"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bois_de_Boulogne_-_Lac_Inferieur_2.jpg/640px-Bois_de_Boulogne_-_Lac_Inferieur_2.jpg" },
+    ],
+    history: [
+      { name: "Notre-Dame de Paris", type: "sight", description: "Gothic cathedral reborn — restored magnificence after 2019 fire", tags: ["Gothic", "Cathedral"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Cath%C3%A9drale_Notre-Dame_de_Paris%2C_4_September_2023.jpg/640px-Cath%C3%A9drale_Notre-Dame_de_Paris%2C_4_September_2023.jpg" },
+      { name: "The Louvre", type: "sight", description: "World's largest museum — plan ahead and pick two wings only", tags: ["Museum", "Iconic"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/640px-Louvre_Museum_Wikimedia_Commons.jpg" },
+      { name: "Versailles Palace", type: "sight", description: "The Sun King's gilded palace — book skip-the-line tickets in advance", tags: ["Royal", "Baroque"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Pal%C3%A1cio_de_Versalhes%2C_Versalhes%2C_Fran%C3%A7a%2C_2013-08-02%2C_DD_01.jpg/640px-Pal%C3%A1cio_de_Versalhes%2C_Versalhes%2C_Fran%C3%A7a%2C_2013-08-02%2C_DD_01.jpg" },
+      { name: "Panthéon", type: "sight", description: "Neoclassical mausoleum housing Voltaire, Rousseau, Marie Curie", tags: ["Mausoleum", "Icons"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Pantheon_of_Paris_007.JPG/640px-Pantheon_of_Paris_007.JPG" },
+      { name: "Conciergerie", type: "sight", description: "Medieval prison where Marie Antoinette awaited her fate", tags: ["Medieval", "Revolution"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/La_conciergerie_et_le_pont_au_change.jpg/640px-La_conciergerie_et_le_pont_au_change.jpg" },
+      { name: "Musée de Cluny", type: "sight", description: "Medieval art museum built on Roman ruins — the Lady and the Unicorn", tags: ["Medieval", "Tapestry"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mus%C3%A9e_de_Cluny_-_fa%C3%A7ade.jpg/640px-Mus%C3%A9e_de_Cluny_-_fa%C3%A7ade.jpg" },
+    ],
+    nightlife: [
+      { name: "Candelaria Cocktail Bar", type: "food", description: "Hidden speakeasy behind a taqueria — world-class craft cocktails", tags: ["Speakeasy", "Cocktails"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
+      { name: "Caveau de la Huchette", type: "sight", description: "Jazz and swing in a medieval cave since 1946 — legendary venue", tags: ["Jazz", "Cave"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Caveau_de_la_Huchette.jpg/640px-Caveau_de_la_Huchette.jpg" },
+      { name: "Le Perchoir Rooftop Bar", type: "food", description: "Rooftop bar with panoramic Paris views and craft cocktails", tags: ["Rooftop", "Views"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Paris_rooftop_view.jpg/640px-Paris_rooftop_view.jpg" },
+      { name: "Rosa Bonheur sur Seine", type: "food", description: "Festive barge bar on the Seine with tapas and dancing", tags: ["Barge", "Festive"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Seine_at_night_Paris.jpg/640px-Seine_at_night_Paris.jpg" },
+      { name: "Silencio Club", type: "sight", description: "David Lynch-designed club — opens to public after 11pm", tags: ["Design", "Club"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Paris_by_night_14_juillet_2012.jpg/640px-Paris_by_night_14_juillet_2012.jpg" },
+      { name: "Le Baron Club", type: "sight", description: "Intimate rock and electronic club beloved by Paris night owls", tags: ["Electronic", "Intimate"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Paris_by_night_14_juillet_2012.jpg/640px-Paris_by_night_14_juillet_2012.jpg" },
+    ],
+    cinema: [
+      { name: "Cinémathèque Française", type: "sight", description: "The world's greatest film archive — exhibitions and daily screenings", tags: ["Film History", "Archive"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Cinematheque-francaise-bercy.jpg/640px-Cinematheque-francaise-bercy.jpg" },
+      { name: "Shakespeare and Company", type: "shop", description: "Legendary English bookshop by Notre-Dame — literary pilgrimage", tags: ["Bookshop", "Literary"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Shakespeare_and_company_bookstore_paris.jpg/640px-Shakespeare_and_company_bookstore_paris.jpg" },
+      { name: "Le Champo Cinema", type: "sight", description: "Classic arthouse cinema beloved by Truffaut and Godard", tags: ["Arthouse", "Classic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Le_Champo_cinema_Paris.jpg/640px-Le_Champo_cinema_Paris.jpg" },
+      { name: "Fondation Cartier", type: "sight", description: "Jean Nouvel's glass building — bold contemporary exhibitions", tags: ["Contemporary", "Glass"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Fondation_Cartier_pour_l%27art_contemporain.jpg/640px-Fondation_Cartier_pour_l%27art_contemporain.jpg" },
+      { name: "La Pagode Cinema", type: "sight", description: "Screening films inside a Japanese pagoda since 1931", tags: ["Historic", "Unique"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Paris_75007_Rue_de_Babylone_57_pagode_01.jpg/640px-Paris_75007_Rue_de_Babylone_57_pagode_01.jpg" },
+      { name: "Forum des Images", type: "sight", description: "Paris's dedicated city film archive — free screenings and exhibitions", tags: ["Cinema", "Archive"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Forum_des_Halles_-_Paris.jpg/640px-Forum_des_Halles_-_Paris.jpg" },
+    ]
   };
-  const interestInstructions = interests.map(i => interestMap[i] || i).join('; ');
 
-  const prompt = `Paris city break planner. Return ONLY minified JSON, no whitespace, no markdown.
+  const RESTAURANTS = {
+    budget: [
+      { name: "Bouillon Chartier", type: "Classic French brasserie", stars: 4, price: "€" },
+      { name: "L'As du Fallafel", type: "Falafel & Middle Eastern", stars: 5, price: "€" },
+      { name: "Chez Janou", type: "Provençal bistro", stars: 4, price: "€€" },
+      { name: "Le Petit Cambodge", type: "Cambodian street food", stars: 4, price: "€€" },
+      { name: "Café de Flore", type: "Historic Parisian café", stars: 4, price: "€€" },
+      { name: "Pink Mamma", type: "Italian trattoria", stars: 4, price: "€€" },
+    ],
+    mid: [
+      { name: "Septime", type: "Bistronomie — market-driven", stars: 5, price: "€€€" },
+      { name: "Le Comptoir du Relais", type: "Saint-Germain brasserie", stars: 4, price: "€€€" },
+      { name: "Frenchie", type: "French-American fusion", stars: 5, price: "€€€" },
+      { name: "Bones", type: "Natural wine & small plates", stars: 4, price: "€€€" },
+      { name: "Au Passage", type: "Wine bar & sharing plates", stars: 4, price: "€€€" },
+      { name: "Clown Bar", type: "Neo-bistro with heritage tiles", stars: 5, price: "€€€" },
+    ],
+    luxury: [
+      { name: "Le Grand Véfour", type: "Michelin 2★ — Napoleon's table", stars: 5, price: "€€€€" },
+      { name: "Taillevent", type: "Michelin 1★ — classic haute cuisine", stars: 5, price: "€€€€" },
+      { name: "Kei", type: "Michelin 2★ — French-Japanese fusion", stars: 5, price: "€€€€" },
+      { name: "Le Cinq", type: "Michelin 3★ — Four Seasons", stars: 5, price: "€€€€€" },
+      { name: "L'Ambroisie", type: "Michelin 3★ — Place des Vosges", stars: 5, price: "€€€€€" },
+      { name: "Lasserre", type: "Michelin 1★ — retractable roof", stars: 5, price: "€€€€" },
+    ]
+  };
 
-Trip: ${days} day(s), ${paceLabel} pace, ${budgetLabel} budget, ${groupLabel}.
+  const TIPS = {
+    art: ["Book Musée d'Orsay tickets online — queues can be 2 hours long", "Visit galleries on Thursday evenings — many open late and free", "The Pompidou rooftop terrace has the best 360° city view — free with ticket"],
+    food: ["Markets close by 1pm — arrive before 11am for the best selection", "Ask for 'formule déjeuner' at any bistro for a 3-course lunch under €20", "The best baguettes are marked 'Tradition' — avoid anything labelled 'Classique'"],
+    architecture: ["Golden hour is 7–8am — monuments without crowds and perfect light", "Many buildings open free on the first Sunday of each month", "Look up — Paris's most beautiful details are above street level"],
+    shopping: ["Most boutiques open at 11am — plan coffee and pastries first", "The Marché aux Puces is closed Monday — plan for Saturday or Sunday", "Bring a fold-up tote bag — plastic bags are banned in French shops"],
+    fashion: ["Le Marais shops stay open on Sundays — unique in Paris", "Vintage stores in Pigalle offer the best price-to-quality ratio", "Many designer boutiques offer tax refunds (détaxe) for non-EU visitors"],
+    parks: ["Bring a picnic — eating on park lawns is encouraged", "Jardin du Luxembourg rents metal chairs — grab one by the fountain", "The Promenade Plantée is quiet on weekday mornings — best time to visit"],
+    history: ["Book Versailles skip-the-line tickets 2 weeks in advance", "The Louvre is less crowded on Wednesday and Friday evenings", "A Paris Museum Pass pays for itself in 2 days if you love history"],
+    nightlife: ["Paris nightlife starts late — dinner at 8pm, bars from 10pm", "Most cocktail bars don't require reservations — just arrive before 9pm", "The last Métro runs around 1:15am — plan your night accordingly"],
+    cinema: ["Cinémathèque screenings are in original language (VO) with subtitles", "Shakespeare & Company has a free upstairs reading room — hidden gem", "La Pagode requires booking ahead — only 60 seats in the main hall"],
+  };
 
-CRITICAL — The traveller is ONLY interested in: ${interests.join(', ')}.
-This means stops MUST focus exclusively on: ${interestInstructions}.
-Do NOT include museums, history monuments, parks, or gardens unless those interests were selected.
-Every single stop must directly match one of the selected interests above.
-
-Rules:
-- Exactly ${days} day objects
-- Exactly ${stopsCount} stops per day, grouped geographically to minimise travel
-- Each stop description: max 12 words
-- Tags: exactly 2 short words each, reflecting the interest category
-- Exactly 2 restaurants per day matching the ${budgetLabel} budget level
-- Exactly 3 practical tips relevant to these specific interests
-- Tagline must reflect the selected interests
-
-JSON (minified):
-{"tagline":"string","days":[{"day":1,"title":"string","stops":[{"time":"9:00 AM","name":"string","type":"sight","description":"string","tags":["str","str"],"highlight":false}],"restaurants":[{"name":"string","type":"string","stars":4,"price":"€€"}]}],"tips":["str","str","str"]}
-
-type must be one of: sight, food, transport, shop, park`;
+  const TAGLINES = {
+    art: "Where every wall tells a story and every gallery holds a revelation",
+    food: "A culinary journey through the world's greatest food city",
+    architecture: "Reading Paris through its stones, steel, and stained glass",
+    shopping: "The ultimate retail pilgrimage — from flea markets to flagships",
+    fashion: "Dressing in the city that invented style",
+    parks: "Paris at its most serene — gardens, rivers, and breathing space",
+    history: "Walking through twenty centuries of history in the City of Light",
+    nightlife: "Paris after dark — cocktails, jazz, and the city that never really sleeps",
+    cinema: "Paris through the lens — culture, film, and literary adventure",
+  };
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
-
+    await new Promise(resolve => setTimeout(resolve, 2000));
     clearInterval(msgInterval);
 
-    if (!response.ok) throw new Error('API error: ' + response.status);
-    const data = await response.json();
-    const text = data.content.map(i => i.text || '').join('');
-    // Strip any markdown fences and find the JSON object
-    const jsonMatch = text.replace(/```json|```/g, '').trim().match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('No valid JSON found in response');
-    const itinerary = JSON.parse(jsonMatch[0]);
+    const primaryInterest = interests[0];
+
+    // STRICT: build pool ONLY from selected interests, round-robin between categories
+    // so all selected interests are represented equally
+    const pools = interests.map(i => (STOPS[i] || []).slice()); // one array per interest
+    const stopsPerDay = { relaxed: 3, balanced: 4, intensive: 5 }[pace] || 4;
+    const totalNeeded = parseInt(days) * stopsPerDay;
+
+    // Round-robin fill: take 1 from each interest pool in rotation
+    const stopPool = [];
+    const usedNames = new Set();
+    let round = 0;
+    while (stopPool.length < totalNeeded + 4) {
+      let added = 0;
+      for (let i = 0; i < pools.length; i++) {
+        const idx = round;
+        if (pools[i][idx] && !usedNames.has(pools[i][idx].name)) {
+          stopPool.push(pools[i][idx]);
+          usedNames.add(pools[i][idx].name);
+          added++;
+        }
+      }
+      round++;
+      if (added === 0) break; // no more stops available
+    }
+
+    const times = ["9:00 AM", "10:30 AM", "12:00 PM", "2:30 PM", "4:30 PM", "6:30 PM"];
+    const dayTitleSets = {
+      nightlife: ["Cocktails & Late Nights", "Bars, Jazz & the Night", "After Dark Adventures"],
+      food:      ["Morning Markets & Patisseries", "Food Trails & Hidden Bistros", "Gourmet Evening"],
+      fashion:   ["Boutiques & Style Hunting", "The Fashion District Trail", "Concept Stores & Vintage"],
+      shopping:  ["Markets & Concept Stores", "Flagship & Flea Markets", "The Grand Shopping Loop"],
+      art:       ["Galleries & Street Art", "Masterpieces & Hidden Gems", "Contemporary Art Trail"],
+      architecture: ["Icons & Hidden Façades", "Bridges, Domes & Arcades", "The Architecture Walk"],
+      parks:     ["Gardens & Riverside Walks", "Parks & Panoramas", "Green Paris"],
+      history:   ["Cathedrals & Palaces", "Revolution & Royalty", "Through the Centuries"],
+      cinema:    ["Film, Books & Culture", "Arthouse & Archives", "The Cultural Trail"],
+    };
+    const titleSet = dayTitleSets[primaryInterest] || ["Day One", "Day Two", "Day Three", "Day Four", "Day Five"];
+
+    const restaurants = RESTAURANTS[budget] || RESTAURANTS.mid;
+    const daysArr = [];
+    let stopIdx = 0;
+
+    for (let d = 1; d <= parseInt(days); d++) {
+      const dayStops = stopPool.slice(stopIdx, stopIdx + stopsPerDay).map((stop, si) => ({
+        ...stop, time: times[si] || times[times.length - 1]
+      }));
+      stopIdx += stopsPerDay;
+      const r1 = restaurants[(d * 2 - 2) % restaurants.length];
+      const r2 = restaurants[(d * 2 - 1) % restaurants.length];
+      daysArr.push({
+        day: d,
+        title: titleSet[(d - 1) % titleSet.length],
+        stops: dayStops,
+        restaurants: [r1, r2]
+      });
+    }
+
+    let allTips = [];
+    interests.forEach(i => { if (TIPS[i]) allTips.push(...TIPS[i]); });
+    const finalTips = [...new Set(allTips)].slice(0, 3);
+    const tagline = TAGLINES[primaryInterest] || "Your perfectly curated Paris experience awaits";
+
+    const itinerary = { tagline, days: daysArr, tips: finalTips };
     window._lastItinerary = itinerary;
 
     // Populate result
@@ -793,21 +963,23 @@ type must be one of: sight, food, transport, shop, park`;
       const section = document.createElement('div');
       section.className = 'day-section';
 
-      let stopsHTML = day.stops.map(stop => `
+      let stopsHTML = day.stops.map(stop => {
+        const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(stop.name + ' Paris')}`;
+        return `
         <div class="stop-item">
           <div class="stop-time-col">
             <div class="stop-icon ${typeClass[stop.type] || 'icon-sight'}">${typeEmoji[stop.type] || '📍'}</div>
             <div class="stop-time">${stop.time}</div>
           </div>
           <div class="stop-content">
-            <div class="stop-name">${stop.name}</div>
+            <a class="stop-name" href="${googleUrl}" target="_blank" rel="noopener">${stop.name} <span class="ext-icon">↗</span></a>
             <div class="stop-desc">${stop.description}</div>
             <div class="stop-tags">
               ${(stop.tags || []).map(t => `<span class="stop-tag ${stop.highlight ? 'highlight' : ''}">${t}</span>`).join('')}
             </div>
           </div>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
 
       let restaurantsHTML = '';
       if (day.restaurants && day.restaurants.length > 0) {
@@ -816,14 +988,16 @@ type must be one of: sight, food, transport, shop, park`;
           <div class="restaurant-section">
             <div class="rest-label">Recommended nearby</div>
             <div class="restaurant-grid">
-              ${day.restaurants.map(r => `
+              ${day.restaurants.map(r => {
+                const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(r.name + ' Paris restaurant')}`;
+                return `
                 <div class="restaurant-card">
-                  <div class="restaurant-name">${r.name}</div>
+                  <a class="restaurant-name" href="${googleUrl}" target="_blank" rel="noopener">${r.name} <span class="ext-icon">↗</span></a>
                   <div class="restaurant-type">${r.type}</div>
                   <div class="restaurant-stars">${stars(r.stars || 4)}</div>
                   <div class="restaurant-price">${r.price}</div>
-                </div>
-              `).join('')}
+                </div>`;
+              }).join('')}
             </div>
           </div>`;
       }
@@ -871,7 +1045,7 @@ type must be one of: sight, food, transport, shop, park`;
     clearInterval(msgInterval);
     loading.classList.remove('visible');
     const errBox = document.getElementById('error-box');
-    errBox.textContent = 'Something went wrong generating your itinerary. Please try again.';
+    errBox.textContent = 'Error: ' + err.message;
     errBox.classList.add('visible');
     console.error(err);
   }
