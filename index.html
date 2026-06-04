@@ -3,1142 +3,811 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paris City Break Planner — AI-Powered</title>
+<title>Paris City Break Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F5F0E8;--cream-dark:#EBE4D6;--ink:#1A1612;--ink-mid:#3D3530;--ink-light:#6B5E56;
+  --gold:#B8860B;--gold-light:#D4A017;--gold-pale:#F0DFA0;--rouge:#8B2635;--sage:#5C7A5F;
+  --font-display:'Cormorant Garamond',serif;--font-body:'DM Sans',sans-serif;
+  --nav-h:64px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;padding-bottom:var(--nav-h)}
 
-  :root {
-    --cream: #F5F0E8;
-    --cream-dark: #EBE4D6;
-    --ink: #1A1612;
-    --ink-mid: #3D3530;
-    --ink-light: #6B5E56;
-    --gold: #B8860B;
-    --gold-light: #D4A017;
-    --gold-pale: #F0DFA0;
-    --rouge: #8B2635;
-    --rouge-light: #C4425A;
-    --sage: #5C7A5F;
-    --font-display: 'Cormorant Garamond', serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
+/* ── PAGES ── */
+.page{display:none;min-height:calc(100vh - var(--nav-h))}
+.page.active{display:block}
 
-  html { scroll-behavior: smooth; }
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);
+  background:var(--ink);z-index:100;
+  display:flex;align-items:stretch;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;transition:background 0.2s;position:relative;
+  border:none;background:none;padding:0;
+}
+.nav-item:hover{background:rgba(255,255,255,0.05)}
+.nav-item.active{background:rgba(184,134,11,0.12)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(245,240,232,0.45);transition:color 0.2s}
+.nav-item.active .nav-label{color:var(--gold)}
+.nav-badge{
+  position:absolute;top:8px;right:calc(50% - 18px);
+  background:var(--rouge);color:var(--cream);
+  font-size:9px;font-weight:500;min-width:16px;height:16px;border-radius:8px;
+  display:none;align-items:center;justify-content:center;padding:0 4px;
+}
+.nav-badge.visible{display:flex}
 
-  body {
-    font-family: var(--font-body);
-    background: var(--cream);
-    color: var(--ink);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* ── PAGE 1: HOME ── */
+.hero{
+  position:relative;min-height:calc(100vh - var(--nav-h));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(184,134,11,0.12) 0%,transparent 70%),
+             radial-gradient(ellipse 60% 80% at 100% 100%,rgba(139,38,53,0.08) 0%,transparent 60%),
+             var(--cream);
+}
+.hero-ornament{position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:80px;background:linear-gradient(to bottom,transparent,var(--gold));z-index:1}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:680px}
+.city-label{
+  font-family:var(--font-body);font-size:11px;font-weight:500;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+}
+.city-label::before,.city-label::after{content:'';display:block;width:32px;height:1px;background:var(--gold)}
+.hero-title{font-family:var(--font-display);font-size:clamp(52px,10vw,88px);font-weight:300;line-height:0.92;color:var(--ink);margin-bottom:0.4em}
+.hero-title em{font-style:italic;color:var(--rouge)}
+.hero-subtitle{font-family:var(--font-display);font-size:clamp(16px,3vw,20px);font-weight:300;color:var(--ink-light);line-height:1.6;margin-bottom:2.5rem}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--ink);color:var(--cream);font-family:var(--font-body);
+  font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
+  padding:16px 36px;border:none;cursor:pointer;transition:background 0.3s;text-decoration:none;
+}
+.hero-cta:hover{background:var(--rouge)}
+.hero-features{
+  position:relative;z-index:2;display:flex;gap:2rem;margin-top:3rem;
+  flex-wrap:wrap;justify-content:center;
+}
+.hero-feat{text-align:center}
+.feat-num{font-family:var(--font-display);font-size:32px;font-weight:300;color:var(--gold)}
+.feat-label{font-size:11px;color:var(--ink-light);letter-spacing:0.05em}
 
-  /* HERO */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    overflow: hidden;
-  }
+/* ── PAGE 2: PLANNER ── */
+.page-header{
+  background:var(--ink);color:var(--cream);padding:2rem;
+  text-align:center;
+}
+.page-header h1{font-family:var(--font-display);font-size:clamp(28px,5vw,42px);font-weight:300}
+.page-header h1 em{font-style:italic;color:var(--gold-pale)}
+.page-header p{font-size:14px;color:rgba(245,240,232,0.6);margin-top:0.5rem}
+.planner-wrap{max-width:860px;margin:0 auto;padding:2rem}
+.planner-form{background:white;border:1px solid var(--cream-dark);padding:2rem;box-shadow:0 2px 40px rgba(26,22,18,0.06)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-light)}
+.form-select{appearance:none;background:var(--cream);border:1px solid var(--cream-dark);padding:11px 14px;font-family:var(--font-body);font-size:14px;color:var(--ink);width:100%;outline:none;transition:border-color 0.2s}
+.form-select:focus{border-color:var(--gold)}
+.interests-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:500px){.interests-grid{grid-template-columns:repeat(2,1fr)}}
+.interest-chip{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  background:var(--cream);border:1px solid var(--cream-dark);cursor:pointer;
+  font-size:13px;color:var(--ink-mid);transition:all 0.2s;user-select:none;
+}
+.interest-chip:hover{border-color:var(--gold)}
+.interest-chip.active{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+.chip-icon{font-size:16px}
+.generate-btn{
+  width:100%;background:var(--ink);color:var(--cream);border:none;padding:17px;
+  font-family:var(--font-body);font-size:14px;font-weight:500;letter-spacing:0.1em;
+  text-transform:uppercase;cursor:pointer;transition:background 0.3s;margin-top:1.25rem;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.generate-btn:hover{background:var(--rouge)}
+.generate-btn:disabled{opacity:0.6;cursor:not-allowed}
+.error-box{background:#FDECEA;border:1px solid #f5c6cb;padding:1rem 1.5rem;margin-top:1rem;font-size:14px;color:var(--rouge);display:none}
+.error-box.visible{display:block}
 
-  .hero-bg {
-    position: absolute; inset: 0; z-index: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(184,134,11,0.12) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 80% at 100% 100%, rgba(139,38,53,0.08) 0%, transparent 60%),
-      var(--cream);
-  }
+/* Loading */
+.loading-state{display:none;flex-direction:column;align-items:center;padding:4rem 2rem;text-align:center}
+.loading-state.visible{display:flex}
+.loading-eiffel{font-size:48px;margin-bottom:1.5rem;animation:sway 2s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.loading-text{font-family:var(--font-display);font-size:22px;font-weight:300;font-style:italic;color:var(--ink-light);margin-bottom:0.5rem}
+.loading-sub{font-size:13px;color:var(--ink-light);letter-spacing:0.05em}
+.loading-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin:0 3px;animation:dot 1.4s ease-in-out infinite}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,80%,100%{transform:scale(0.8);opacity:0.4}40%{transform:scale(1.2);opacity:1}}
 
-  .hero-ornament {
-    position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    width: 1px; height: 80px;
-    background: linear-gradient(to bottom, transparent, var(--gold));
-    z-index: 1;
-  }
+/* ── PAGE 3: MY TRIP ── */
+.trip-page-wrap{max-width:900px;margin:0 auto;padding:0 0 2rem}
 
-  .hero-content { position: relative; z-index: 2; text-align: center; max-width: 680px; }
+/* Itinerary header */
+.itinerary-header{background:var(--ink);color:var(--cream);padding:2rem;position:relative;overflow:hidden}
+.itinerary-header::before{content:'PARIS';position:absolute;right:-20px;top:50%;transform:translateY(-50%);font-family:var(--font-display);font-size:120px;font-weight:300;font-style:italic;color:rgba(255,255,255,0.04);pointer-events:none;white-space:nowrap}
+.itinerary-meta{display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:1rem}
+.meta-item{font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(245,240,232,0.6)}
+.meta-item strong{display:block;font-size:22px;letter-spacing:0;text-transform:none;color:var(--cream);font-family:var(--font-display);font-weight:300}
+.itinerary-title-h{font-family:var(--font-display);font-size:28px;font-weight:300;color:var(--gold-pale);font-style:italic}
 
-  .city-label {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1.5rem;
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-  }
-  .city-label::before, .city-label::after {
-    content: ''; display: block; width: 32px; height: 1px; background: var(--gold);
-  }
+/* Empty state */
+.empty-trip{text-align:center;padding:4rem 2rem}
+.empty-trip-icon{font-size:48px;margin-bottom:1rem}
+.empty-trip h3{font-family:var(--font-display);font-size:28px;font-weight:300;font-style:italic;color:var(--ink-light);margin-bottom:0.5rem}
+.empty-trip p{font-size:14px;color:var(--ink-light)}
+.empty-trip-btn{margin-top:1.5rem;display:inline-block;background:var(--ink);color:var(--cream);border:none;padding:14px 28px;font-family:var(--font-body);font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:background 0.3s}
+.empty-trip-btn:hover{background:var(--rouge)}
 
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(52px, 10vw, 88px);
-    font-weight: 300;
-    line-height: 0.92;
-    color: var(--ink);
-    margin-bottom: 0.4em;
-  }
-  .hero-title em {
-    font-style: italic;
-    color: var(--rouge);
-  }
+/* Day sections */
+.day-section{background:white;border:1px solid var(--cream-dark);border-top:none}
+.day-header{display:flex;align-items:center;gap:1rem;padding:1.1rem 1.5rem;background:var(--cream);border-bottom:1px solid var(--cream-dark);cursor:pointer;transition:background 0.2s}
+.day-header:hover{background:var(--cream-dark)}
+.day-number{width:38px;height:38px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:17px;font-weight:300;flex-shrink:0}
+.day-title-text{font-family:var(--font-display);font-size:19px;font-weight:300;font-style:italic;color:var(--ink);flex:1}
+.day-toggle{font-size:18px;color:var(--ink-light);transition:transform 0.3s}
+.day-header.open .day-toggle{transform:rotate(180deg)}
+.day-body{padding:1.25rem 1.5rem 1.5rem;display:none}
+.day-body.open{display:block}
 
-  .hero-subtitle {
-    font-family: var(--font-display);
-    font-size: clamp(16px, 3vw, 20px);
-    font-weight: 300;
-    color: var(--ink-light);
-    line-height: 1.6;
-    margin-bottom: 2.5rem;
-  }
+/* Stop items */
+.stop-item{display:grid;grid-template-columns:52px 1fr;gap:0 1rem;margin-bottom:1.1rem;position:relative;align-items:start}
+.stop-item::before{content:'';position:absolute;left:25px;top:52px;bottom:-10px;width:1px;background:var(--cream-dark)}
+.stop-item:last-child::before{display:none}
+.stop-time-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.stop-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.icon-sight{background:#EBE4D6}.icon-food{background:#FDECEA}.icon-transport{background:#E8F0E9}.icon-shop{background:#EDE8F5}.icon-park{background:#E8F0E9}
+.stop-time{font-size:10px;color:var(--ink-light);letter-spacing:0.04em;font-weight:500;text-align:center}
+.stop-content{padding-top:4px}
+.stop-name-row{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.stop-checkbox-wrap{display:flex;align-items:center;cursor:pointer;flex-shrink:0}
+.stop-checkbox-wrap input[type="checkbox"]{display:none}
+.stop-checkmark{width:18px;height:18px;border:1.5px solid var(--cream-dark);background:var(--cream);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.stop-checkbox-wrap input:checked + .stop-checkmark{background:var(--ink);border-color:var(--ink)}
+.stop-checkbox-wrap input:checked + .stop-checkmark::after{content:'✓';color:var(--cream);font-size:11px;font-weight:500}
+.stop-item.deselected{opacity:0.4}
+a.stop-name{font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:color 0.2s}
+a.stop-name:hover{color:var(--rouge)}
+.ext-icon{font-size:11px;color:var(--gold);font-family:var(--font-body);font-weight:400;opacity:0.8}
+.stop-desc{font-size:13px;color:var(--ink-light);line-height:1.6;margin-bottom:5px}
+.stop-tags{display:flex;gap:5px;flex-wrap:wrap}
+.stop-tag{font-size:11px;padding:2px 8px;background:var(--cream);border:1px solid var(--cream-dark);color:var(--ink-mid);letter-spacing:0.03em}
+.stop-tag.highlight{background:var(--gold-pale);border-color:var(--gold);color:var(--gold)}
 
-  .hero-cta {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: var(--ink);
-    color: var(--cream);
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 16px 36px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    text-decoration: none;
-  }
-  .hero-cta::before {
-    content: ''; position: absolute; inset: 0;
-    background: var(--rouge);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.4s ease;
-    z-index: 0;
-  }
-  .hero-cta:hover::before { transform: scaleX(1); }
-  .hero-cta span { position: relative; z-index: 1; }
-  .hero-cta:hover { color: var(--cream); }
+/* Restaurants */
+.restaurant-section{margin-top:1.25rem}
+.rest-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--rouge);margin-bottom:0.6rem;display:flex;align-items:center;gap:8px}
+.rest-label::after{content:'';flex:1;height:1px;background:var(--cream-dark)}
+.restaurant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+.restaurant-card{padding:11px 13px;background:var(--cream);border:1px solid var(--cream-dark);transition:border-color 0.2s}
+.restaurant-card:hover{border-color:var(--gold)}
+a.restaurant-name{font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:3px;transition:color 0.2s}
+a.restaurant-name:hover{color:var(--rouge)}
+.restaurant-type{font-size:12px;color:var(--ink-light);margin-bottom:3px}
+.restaurant-stars{color:var(--gold);font-size:12px}
+.restaurant-price{font-size:12px;color:var(--sage);font-weight:500}
 
-  .hero-arrow {
-    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-    z-index: 2; animation: bounce 2s ease-in-out infinite;
-    color: var(--ink-light); font-size: 20px; cursor: pointer;
-  }
-  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+/* Tips */
+.tips-box{margin-top:1.5rem;padding:1.25rem;border-left:3px solid var(--gold);background:linear-gradient(to right,rgba(240,223,160,0.15),transparent)}
+.tips-title{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem}
+.tips-list{list-style:none}
+.tips-list li{font-size:13px;color:var(--ink-mid);padding:3px 0 3px 16px;position:relative;line-height:1.5}
+.tips-list li::before{content:'→';position:absolute;left:0;color:var(--gold)}
 
-  /* PLANNER SECTION */
-  #planner {
-    padding: 5rem 2rem;
-    max-width: 900px; margin: 0 auto;
-  }
+/* Map link */
+.map-link-bar{display:flex;align-items:center;gap:10px;padding:0.9rem 1.5rem;background:white;border:1px solid var(--cream-dark);border-top:1px solid var(--cream-dark);margin-top:-1px;font-size:13px;color:var(--ink-light)}
+.map-link-bar a{color:var(--rouge);text-decoration:underline}
 
-  .section-heading {
-    text-align: center; margin-bottom: 3rem;
-  }
-  .section-heading h2 {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 6vw, 52px);
-    font-weight: 300;
-    color: var(--ink);
-  }
-  .section-heading h2 em { font-style: italic; color: var(--rouge); }
-  .section-heading p {
-    font-size: 15px;
-    color: var(--ink-light);
-    margin-top: 0.75rem;
-  }
+/* Selection bar */
+.selection-bar{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:var(--ink);color:var(--cream);gap:1rem;border:1px solid var(--cream-dark);border-top:none;margin-top:-1px}
+.sel-count{font-size:13px;color:rgba(245,240,232,0.7);letter-spacing:0.04em}
+.sel-count span{color:var(--gold-pale);font-weight:500;font-size:15px}
+.sel-review-btn{background:var(--gold);color:var(--ink);border:none;padding:9px 20px;font-family:var(--font-body);font-size:12px;font-weight:500;letter-spacing:0.06em;cursor:pointer;transition:background 0.2s;flex-shrink:0;text-transform:uppercase}
+.sel-review-btn:hover{background:var(--gold-light)}
 
-  /* FORM */
-  .planner-form {
-    background: white;
-    border: 1px solid var(--cream-dark);
-    padding: 2.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 40px rgba(26,22,18,0.06);
-  }
+/* Itinerary actions */
+.itinerary-actions{display:flex;gap:9px;flex-wrap:wrap;padding:1.25rem 1.5rem;background:var(--cream);border:1px solid var(--cream-dark);border-top:none;margin-top:-1px}
+.action-btn{display:flex;align-items:center;gap:7px;padding:9px 18px;font-family:var(--font-body);font-size:12px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border:none}
+.action-btn.primary{background:var(--ink);color:var(--cream)}
+.action-btn.primary:hover{background:var(--rouge)}
+.action-btn.secondary{background:white;color:var(--ink);border:1px solid var(--cream-dark)}
+.action-btn.secondary:hover{border-color:var(--ink)}
 
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+/* Review overlay */
+.review-overlay{display:none;position:fixed;inset:0 0 var(--nav-h) 0;background:var(--cream);z-index:50;overflow-y:auto}
+.review-overlay.open{display:block}
+.review-header{background:var(--ink);color:var(--cream);padding:1.5rem}
+.review-back{font-size:12px;letter-spacing:0.08em;color:rgba(245,240,232,0.5);cursor:pointer;margin-bottom:0.75rem;display:inline-block;transition:color 0.2s;border:none;background:none;font-family:var(--font-body)}
+.review-back:hover{color:var(--gold-pale)}
+.review-title{font-family:var(--font-display);font-size:30px;font-weight:300;color:var(--cream);margin-bottom:0.3rem}
+.review-title em{font-style:italic;color:var(--gold-pale)}
+.review-sub{font-size:13px;color:rgba(245,240,232,0.6)}
+.review-body{max-width:860px;margin:0 auto;padding:1.5rem}
+.review-day-group{margin-bottom:1.5rem}
+.review-day-title{font-family:var(--font-display);font-size:18px;font-style:italic;font-weight:300;color:var(--ink);margin-bottom:0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--cream-dark);display:flex;align-items:center;gap:9px}
+.review-day-num{width:26px;height:26px;background:var(--ink);color:var(--cream);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;border-radius:50%;flex-shrink:0}
+.review-stop-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:0.5px solid var(--cream-dark)}
+.review-stop-row:last-child{border-bottom:none}
+.review-stop-time{font-size:11px;color:var(--gold);font-weight:500;width:52px;flex-shrink:0;letter-spacing:0.03em}
+.review-stop-icon{font-size:15px;flex-shrink:0}
+.review-stop-info{flex:1}
+a.review-stop-name{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--ink);text-decoration:none}
+a.review-stop-name:hover{color:var(--rouge)}
+.review-stop-desc{font-size:11px;color:var(--ink-light);margin-top:1px}
+.review-remove{width:24px;height:24px;border:none;background:none;color:var(--ink-light);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:color 0.2s;flex-shrink:0}
+.review-remove:hover{color:var(--rouge)}
+.review-actions{display:flex;gap:9px;padding:1.25rem 1.5rem;background:var(--cream);border-top:1px solid var(--cream-dark);position:sticky;bottom:0}
+.review-empty{text-align:center;padding:3rem 2rem;font-family:var(--font-display);font-size:20px;font-style:italic;color:var(--ink-light)}
 
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group.full { grid-column: 1 / -1; }
+/* Final trip */
+.trip-map-bar{background:white;border:1px solid var(--cream-dark);padding:0.9rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-light)}
+.trip-map-bar a{color:var(--rouge);text-decoration:underline}
+.trip-tips{margin-top:1.5rem;padding:1.1rem 1.25rem;border-left:3px solid var(--gold);background:rgba(240,223,160,.12)}
+.trip-tips-title{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem}
+.trip-tips ul{list-style:none}
+.trip-tips ul li{font-size:13px;color:var(--ink-mid);padding:3px 0 3px 15px;position:relative;line-height:1.5}
+.trip-tips ul li::before{content:'→';position:absolute;left:0;color:var(--gold)}
 
-  .form-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-  }
+/* Regen notice */
+.regen-notice{padding:0.6rem 1.5rem;background:rgba(184,134,11,0.1);font-size:12px;color:var(--ink-mid);border:1px solid var(--gold-pale);border-top:none;margin-top:-1px}
 
-  .form-select, .form-input {
-    appearance: none;
-    background: var(--cream);
-    border: 1px solid var(--cream-dark);
-    border-radius: 0;
-    padding: 12px 16px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    color: var(--ink);
-    width: 100%;
-    transition: border-color 0.2s;
-    outline: none;
-  }
-  .form-select:focus, .form-input:focus { border-color: var(--gold); }
+/* Results divider */
+.results-divider{display:flex;align-items:center;gap:12px;padding:1.25rem 0 1rem;flex-wrap:wrap}
+.results-divider span{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-light);white-space:nowrap}
+.results-divider-line{flex:1;height:1px;background:var(--cream-dark)}
+.regenerate-link{background:none;border:1px solid var(--cream-dark);color:var(--ink-light);font-family:var(--font-body);font-size:11px;padding:5px 12px;cursor:pointer;letter-spacing:0.05em;transition:all 0.2s;white-space:nowrap}
+.regenerate-link:hover{border-color:var(--ink);color:var(--ink)}
 
-  .interests-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  @media (max-width: 500px) { .interests-grid { grid-template-columns: repeat(2, 1fr); } }
+/* Add to trip sticky bar */
+.add-to-trip-bar{
+  position:sticky;bottom:var(--nav-h);
+  background:var(--ink);display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.5rem;gap:1rem;
+  box-shadow:0 -4px 20px rgba(26,22,18,0.15);
+  transition:opacity 0.3s;
+}
+.add-bar-left{display:flex;align-items:baseline;gap:6px}
+.add-bar-count{font-size:20px;font-weight:500;color:var(--gold-pale);font-family:var(--font-display)}
+.add-bar-label{font-size:12px;color:rgba(245,240,232,0.6);letter-spacing:0.04em}
+.add-to-trip-btn{
+  background:var(--gold);color:var(--ink);border:none;
+  padding:11px 22px;font-family:var(--font-body);font-size:13px;font-weight:500;
+  letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;
+  flex-shrink:0;white-space:nowrap;
+}
+.add-to-trip-btn:hover{background:var(--gold-light)}
+.add-to-trip-btn:disabled{opacity:0.4;cursor:not-allowed}
 
-  .interest-chip {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
-    background: var(--cream);
-    border: 1px solid var(--cream-dark);
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--ink-mid);
-    transition: all 0.2s;
-    user-select: none;
-  }
-  .interest-chip:hover { border-color: var(--gold); }
-  .interest-chip.active {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--cream);
-  }
-  .interest-chip .chip-icon { font-size: 16px; }
+/* Trip page saved trip */
+.trip-remove-btn{width:28px;height:28px;border:none;background:none;color:var(--ink-light);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:color 0.2s;flex-shrink:0}
+.trip-remove-btn:hover{color:var(--rouge)}
 
-  .generate-btn {
-    width: 100%;
-    background: var(--ink);
-    color: var(--cream);
-    border: none;
-    padding: 18px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-  }
-  .generate-btn:hover { background: var(--rouge); }
-  .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+/* Visited checkbox */
+.visited-wrap{display:flex;align-items:center;cursor:pointer;flex-shrink:0;gap:5px;user-select:none}
+.visited-wrap input{display:none}
+.visited-box{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid var(--cream-dark);background:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;flex-shrink:0;font-size:11px;
+}
+.visited-wrap input:checked + .visited-box{
+  background:var(--sage);border-color:var(--sage);color:white;
+}
+.visited-wrap input:checked + .visited-box::after{content:'✓';color:white;font-size:11px;font-weight:600}
+.visited-label{font-size:10px;color:var(--ink-light);letter-spacing:0.04em;white-space:nowrap}
+.visited-wrap input:checked ~ .visited-label{color:var(--sage);font-weight:500}
+.stop-item.visited{opacity:0.55}
+.stop-item.visited .stop-name{text-decoration:line-through;color:var(--ink-light)}
+.visited-progress{
+  display:flex;align-items:center;gap:10px;
+  padding:0.75rem 1.5rem;background:var(--cream);
+  border:1px solid var(--cream-dark);border-top:none;
+  font-size:12px;color:var(--ink-light);
+}
+.visited-progress-bar{flex:1;height:4px;background:var(--cream-dark);border-radius:2px;overflow:hidden}
+.visited-progress-fill{height:100%;background:var(--sage);border-radius:2px;transition:width 0.4s ease}
+.visited-progress-text{font-size:12px;color:var(--sage);font-weight:500;white-space:nowrap}
 
-  /* LOADING */
-  .loading-state {
-    display: none;
-    flex-direction: column; align-items: center;
-    padding: 4rem 2rem; text-align: center;
-  }
-  .loading-state.visible { display: flex; }
+/* Add manual location */
+.add-location-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px;background:none;border:1.5px dashed var(--cream-dark);
+  color:var(--ink-light);font-family:var(--font-body);font-size:12px;
+  letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;margin-top:2px;
+}
+.add-location-btn:hover{border-color:var(--gold);color:var(--gold)}
+.add-location-form{
+  display:none;padding:12px 14px;background:var(--cream);
+  border-top:1px solid var(--cream-dark);
+}
+.add-location-form.open{display:block}
+.add-loc-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.add-loc-input{
+  flex:1;min-width:150px;padding:8px 10px;
+  background:white;border:1px solid var(--cream-dark);
+  font-family:var(--font-body);font-size:13px;color:var(--ink);
+  outline:none;transition:border-color 0.2s;
+}
+.add-loc-input:focus{border-color:var(--gold)}
+.add-loc-select{
+  padding:8px 10px;background:white;border:1px solid var(--cream-dark);
+  font-family:var(--font-body);font-size:13px;color:var(--ink);
+  outline:none;cursor:pointer;appearance:none;
+}
+.add-loc-confirm{
+  padding:8px 16px;background:var(--ink);color:var(--cream);
+  border:none;font-family:var(--font-body);font-size:12px;
+  font-weight:500;letter-spacing:0.06em;cursor:pointer;
+  text-transform:uppercase;transition:background 0.2s;white-space:nowrap;
+}
+.add-loc-confirm:hover{background:var(--rouge)}
+.add-loc-cancel{
+  padding:8px 12px;background:none;border:1px solid var(--cream-dark);
+  color:var(--ink-light);font-family:var(--font-body);font-size:12px;
+  cursor:pointer;transition:all 0.2s;
+}
+.add-loc-cancel:hover{border-color:var(--ink);color:var(--ink)}
 
-  .loading-eiffel {
-    font-size: 48px; margin-bottom: 1.5rem;
-    animation: sway 2s ease-in-out infinite;
-  }
-  @keyframes sway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
-
-  .loading-text {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 300;
-    font-style: italic;
-    color: var(--ink-light);
-    margin-bottom: 0.5rem;
-  }
-  .loading-sub { font-size: 13px; color: var(--ink-light); letter-spacing: 0.05em; }
-
-  .loading-dots span {
-    display: inline-block; width: 6px; height: 6px;
-    border-radius: 50%; background: var(--gold);
-    margin: 0 3px; animation: dot 1.4s ease-in-out infinite;
-  }
-  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes dot { 0%,80%,100%{transform:scale(0.8);opacity:0.4} 40%{transform:scale(1.2);opacity:1} }
-
-  /* ITINERARY RESULT */
-  #itinerary-result { display: none; }
-  #itinerary-result.visible { display: block; }
-
-  .itinerary-header {
-    background: var(--ink);
-    color: var(--cream);
-    padding: 2.5rem;
-    margin-bottom: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  .itinerary-header::before {
-    content: 'PARIS';
-    position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
-    font-family: var(--font-display);
-    font-size: 120px; font-weight: 300; font-style: italic;
-    color: rgba(255,255,255,0.04);
-    pointer-events: none;
-    white-space: nowrap;
-  }
-
-  .itinerary-meta {
-    display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem;
-  }
-  .meta-item { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,240,232,0.6); }
-  .meta-item strong { display: block; font-size: 22px; letter-spacing: 0; text-transform: none; color: var(--cream); font-family: var(--font-display); font-weight: 300; }
-
-  .itinerary-title-h {
-    font-family: var(--font-display);
-    font-size: 32px; font-weight: 300;
-    color: var(--gold-pale);
-    font-style: italic;
-  }
-
-  /* DAY CARDS */
-  .day-section {
-    margin-bottom: 0;
-    border: 1px solid var(--cream-dark);
-    border-top: none;
-    background: white;
-  }
-
-  .day-header {
-    display: flex; align-items: center; gap: 1rem;
-    padding: 1.25rem 2rem;
-    background: var(--cream);
-    border-bottom: 1px solid var(--cream-dark);
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .day-header:hover { background: var(--cream-dark); }
-
-  .day-number {
-    width: 40px; height: 40px;
-    background: var(--ink);
-    color: var(--cream);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 300; flex-shrink: 0;
-  }
-
-  .day-title-text {
-    font-family: var(--font-display);
-    font-size: 20px; font-weight: 300; font-style: italic;
-    color: var(--ink);
-    flex: 1;
-  }
-  .day-toggle { font-size: 18px; color: var(--ink-light); transition: transform 0.3s; }
-  .day-header.open .day-toggle { transform: rotate(180deg); }
-
-  .day-body {
-    padding: 1.5rem 2rem 2rem;
-    display: none;
-  }
-  .day-body.open { display: block; }
-
-  /* STOP ITEM */
-  /* stop-item defined below with photo support */
-  .stop-item::before {
-    content: ''; position: absolute;
-    left: 23px; top: 52px; bottom: -12px;
-    width: 1px; background: var(--cream-dark);
-  }
-  .stop-item:last-child::before { display: none; }
-
-  .stop-time-col {
-    display: flex; flex-direction: column; align-items: center;
-    gap: 4px;
-  }
-
-  .stop-icon {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; flex-shrink: 0;
-  }
-  .icon-sight { background: #EBE4D6; }
-  .icon-food { background: #FDECEA; }
-  .icon-transport { background: #E8F0E9; }
-  .icon-shop { background: #EDE8F5; }
-  .icon-park { background: #E8F0E9; }
-
-  .stop-time {
-    font-size: 11px; color: var(--ink-light);
-    letter-spacing: 0.04em; font-weight: 500;
-    text-align: center;
-  }
-
-  .stop-content { padding-top: 4px; }
-  /* stop-name styled as anchor — see link styles above */
-
-  /* CHECKBOX */
-  .stop-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
-  .stop-checkbox-wrap { display: flex; align-items: center; cursor: pointer; flex-shrink: 0; }
-  .stop-checkbox-wrap input[type="checkbox"] { display: none; }
-  .stop-checkmark {
-    width: 18px; height: 18px;
-    border: 1.5px solid var(--cream-dark);
-    background: var(--cream);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.2s; position: relative;
-  }
-  .stop-checkbox-wrap input:checked + .stop-checkmark {
-    background: var(--ink); border-color: var(--ink);
-  }
-  .stop-checkbox-wrap input:checked + .stop-checkmark::after {
-    content: '✓'; color: var(--cream); font-size: 11px; font-weight: 500;
-  }
-  .stop-item.deselected { opacity: 0.4; }
-
-  /* SELECTION BAR */
-  .selection-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 2rem;
-    background: var(--ink);
-    color: var(--cream);
-    border-top: none;
-    gap: 1rem;
-  }
-  .sel-count { font-size: 13px; color: rgba(245,240,232,0.7); letter-spacing: 0.05em; }
-  .sel-count span { color: var(--gold-pale); font-weight: 500; font-size: 16px; }
-  .sel-review-btn {
-    background: var(--gold); color: var(--ink); border: none;
-    padding: 10px 24px; font-family: var(--font-body);
-    font-size: 13px; font-weight: 500; letter-spacing: 0.06em;
-    cursor: pointer; transition: background 0.2s; flex-shrink: 0;
-  }
-  .sel-review-btn:hover { background: var(--gold-light); }
-
-  /* REVIEW & TRIP PAGES */
-  .review-header {
-    background: var(--ink); color: var(--cream); padding: 2rem;
-    margin-bottom: 0;
-  }
-  .review-back {
-    font-size: 12px; letter-spacing: 0.08em; color: rgba(245,240,232,0.5);
-    cursor: pointer; margin-bottom: 1rem; display: inline-block;
-    transition: color 0.2s;
-  }
-  .review-back:hover { color: var(--gold-pale); }
-  .review-title {
-    font-family: var(--font-display); font-size: 36px; font-weight: 300;
-    color: var(--cream); margin-bottom: 0.4rem;
-  }
-  .review-title em { font-style: italic; color: var(--gold-pale); }
-  .review-sub { font-size: 14px; color: rgba(245,240,232,0.6); }
-  .review-body, #trip-body {
-    max-width: 900px; margin: 0 auto; padding: 2rem;
-  }
-  .review-day-group { margin-bottom: 2rem; }
-  .review-day-title {
-    font-family: var(--font-display); font-size: 20px; font-style: italic;
-    font-weight: 300; color: var(--ink); margin-bottom: 1rem;
-    padding-bottom: 0.5rem; border-bottom: 1px solid var(--cream-dark);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .review-day-num {
-    width: 28px; height: 28px; background: var(--ink); color: var(--cream);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-size: 14px; border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .review-stop-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 0; border-bottom: 0.5px solid var(--cream-dark);
-  }
-  .review-stop-row:last-child { border-bottom: none; }
-  .review-stop-time {
-    font-size: 11px; color: var(--gold); font-weight: 500;
-    width: 52px; flex-shrink: 0; letter-spacing: 0.04em;
-  }
-  .review-stop-icon { font-size: 16px; flex-shrink: 0; }
-  .review-stop-info { flex: 1; }
-  .review-stop-name {
-    font-family: var(--font-display); font-size: 16px; font-weight: 600;
-    color: var(--ink); text-decoration: none;
-  }
-  .review-stop-name:hover { color: var(--rouge); }
-  .review-stop-desc { font-size: 12px; color: var(--ink-light); margin-top: 1px; }
-  .review-remove {
-    width: 24px; height: 24px; border: none; background: none;
-    color: var(--ink-light); cursor: pointer; font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: color 0.2s; flex-shrink: 0;
-  }
-  .review-remove:hover { color: var(--rouge); }
-  .review-actions {
-    display: flex; gap: 10px; padding: 1.5rem 2rem;
-    background: var(--cream); border-top: 1px solid var(--cream-dark);
-    max-width: 100%;
-  }
-  .review-empty {
-    text-align: center; padding: 3rem 2rem;
-    font-family: var(--font-display); font-size: 20px; font-style: italic;
-    color: var(--ink-light);
-  }
-
-  /* TRIP PAGE */
-  .trip-map-bar {
-    background: white; border: 1px solid var(--cream-dark);
-    padding: 1rem 1.5rem; margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; color: var(--ink-light);
-  }
-  .trip-map-bar a { color: var(--rouge); text-decoration: underline; }
-  .trip-tips {
-    margin-top: 1.5rem; padding: 1.25rem 1.5rem;
-    border-left: 3px solid var(--gold);
-    background: rgba(240,223,160,0.12);
-  }
-  .trip-tips-title {
-    font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem;
-  }
-  .trip-tips ul { list-style: none; }
-  .trip-tips ul li {
-    font-size: 13px; color: var(--ink-mid); padding: 3px 0 3px 16px;
-    position: relative; line-height: 1.5;
-  }
-  .trip-tips ul li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
-  .stop-desc {
-    font-size: 13px; color: var(--ink-light);
-    line-height: 1.6; margin-bottom: 6px;
-  }
-  .stop-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .stop-tag {
-    font-size: 11px; padding: 2px 8px;
-    background: var(--cream); border: 1px solid var(--cream-dark);
-    color: var(--ink-mid); letter-spacing: 0.04em;
-  }
-  .stop-tag.highlight { background: var(--gold-pale); border-color: var(--gold); color: var(--gold); }
-
-  /* RESTAURANT SECTION */
-  .restaurant-section { margin-top: 1.5rem; }
-  .rest-label {
-    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--rouge);
-    margin-bottom: 0.75rem;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .rest-label::after { content: ''; flex: 1; height: 1px; background: var(--cream-dark); }
-
-  .restaurant-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-
-  .restaurant-card {
-    padding: 12px 14px;
-    background: var(--cream);
-    border: 1px solid var(--cream-dark);
-    transition: border-color 0.2s;
-  }
-  .restaurant-card:hover { border-color: var(--gold); }
-  /* restaurant-name styled as anchor — see link styles above */
-  .restaurant-type { font-size: 12px; color: var(--ink-light); margin-bottom: 4px; }
-  .restaurant-stars { color: var(--gold); font-size: 12px; }
-  .restaurant-price { font-size: 12px; color: var(--sage); font-weight: 500; }
-
-  /* TIPS BOX */
-  .tips-box {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    border-left: 3px solid var(--gold);
-    background: linear-gradient(to right, rgba(240,223,160,0.15), transparent);
-  }
-  .tips-title {
-    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--gold);
-    margin-bottom: 0.75rem;
-  }
-  .tips-list { list-style: none; }
-  .tips-list li {
-    font-size: 13px; color: var(--ink-mid);
-    padding: 4px 0; padding-left: 16px;
-    position: relative; line-height: 1.5;
-  }
-  .tips-list li::before {
-    content: '→'; position: absolute; left: 0;
-    color: var(--gold);
-  }
-
-  /* ACTIONS */
-  .itinerary-actions {
-    display: flex; gap: 10px; flex-wrap: wrap;
-    padding: 1.5rem 2rem;
-    background: var(--cream);
-    border: 1px solid var(--cream-dark);
-    border-top: none;
-  }
-
-  .action-btn {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 20px;
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-  }
-  .action-btn.primary { background: var(--ink); color: var(--cream); }
-  .action-btn.primary:hover { background: var(--rouge); }
-  .action-btn.secondary { background: white; color: var(--ink); border: 1px solid var(--cream-dark); }
-  .action-btn.secondary:hover { border-color: var(--ink); }
-
-  /* MAP LINK */
-  .map-link-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 1rem 2rem;
-    background: white;
-    border: 1px solid var(--cream-dark);
-    border-top: 1px solid var(--cream-dark);
-    margin-top: -1px;
-  }
-  .map-icon { font-size: 20px; }
-  .map-text { font-size: 13px; color: var(--ink-light); flex: 1; }
-  .map-text a { color: var(--rouge); text-decoration: underline; cursor: pointer; }
-
-  /* FOOTER */
-  footer {
-    text-align: center; padding: 3rem 2rem;
-    font-size: 12px; color: var(--ink-light);
-    letter-spacing: 0.06em;
-    border-top: 1px solid var(--cream-dark);
-    margin-top: 4rem;
-  }
-  footer strong { font-family: var(--font-display); font-size: 18px; font-weight: 300; font-style: italic; }
-
-  .stop-photo {
-    display: none;
-  }
-  .stop-item {
-    display: grid;
-    grid-template-columns: 52px 1fr;
-    gap: 0 1rem;
-    margin-bottom: 1.25rem;
-    position: relative;
-    align-items: start;
-  }
-  a.stop-name {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--ink);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 3px;
-    transition: color 0.2s;
-  }
-  a.stop-name:hover { color: var(--rouge); }
-  a.restaurant-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--ink);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    margin-bottom: 2px;
-    transition: color 0.2s;
-  }
-  a.restaurant-name:hover { color: var(--rouge); }
-  .ext-icon {
-    font-size: 11px;
-    color: var(--gold);
-    font-family: var(--font-body);
-    font-weight: 400;
-    opacity: 0.8;
-  }
-  @media (max-width: 540px) {
-    .stop-item { grid-template-columns: 44px 1fr; }
-  }
-  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .fade-in.visible { opacity: 1; transform: none; }
-
-  /* ERROR */
-  .error-box {
-    background: #FDECEA; border: 1px solid #f5c6cb;
-    padding: 1rem 1.5rem; margin-top: 1rem;
-    font-size: 14px; color: var(--rouge); display: none;
-  }
-  .error-box.visible { display: block; }
+/* Autocomplete */
+.add-loc-autocomplete{display:flex;flex-direction:column;gap:6px}
+.add-loc-search-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start}
+.add-loc-search-wrap{flex:1;min-width:160px;position:relative}
+.add-loc-dropdown{
+  display:none;position:absolute;top:100%;left:0;right:0;
+  background:white;border:1px solid var(--cream-dark);
+  border-top:none;z-index:100;max-height:220px;overflow-y:auto;
+  box-shadow:0 4px 12px rgba(26,22,18,0.1);
+}
+.add-loc-dropdown.open{display:block}
+.add-loc-option{
+  padding:9px 12px;font-size:13px;color:var(--ink);cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:0.5px solid var(--cream-dark);transition:background 0.15s;
+}
+.add-loc-option:last-child{border-bottom:none}
+.add-loc-option:hover,.add-loc-option.focused{background:var(--cream)}
+.add-loc-option-icon{font-size:14px;flex-shrink:0}
+.add-loc-option-info{flex:1;min-width:0}
+.add-loc-option-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.add-loc-option-cat{font-size:11px;color:var(--ink-light)}
+.add-loc-option-badge{font-size:10px;color:var(--gold);background:rgba(184,134,11,0.1);padding:1px 5px;border-radius:2px;flex-shrink:0}
+.add-loc-hint{font-size:11px;color:var(--ink-light);letter-spacing:0.02em}
+.add-loc-manual-row{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  font-size:12px;color:var(--ink-light);cursor:pointer;
+  border-top:1px solid var(--cream-dark);background:var(--cream);
+}
+.add-loc-manual-row:hover{color:var(--ink)}
 </style>
 </head>
 <body>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-ornament"></div>
-  <div class="hero-content">
-    <div class="city-label">AI-Powered City Break Planner</div>
-    <h1 class="hero-title">
-      Plan your<br><em>Paris</em><br>perfectly
-    </h1>
-    <p class="hero-subtitle">
-      Tell us your days, your pace, your passions.<br>
-      We craft the perfect itinerary — optimised, curated, <em>yours</em>.
-    </p>
-    <a class="hero-cta" href="#planner">
-      <span>✦ Start planning</span>
-    </a>
-  </div>
-  <div class="hero-arrow" onclick="document.getElementById('planner').scrollIntoView({behavior:'smooth'})">↓</div>
-</section>
+<!-- ══ PAGE 1: HOME ══ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-ornament"></div>
+    <div class="hero-content">
+      <div class="city-label">AI-Powered City Break Planner</div>
+      <h1 class="hero-title">Plan your<br><em>Paris</em><br>perfectly</h1>
+      <p class="hero-subtitle">Tell us your days, your pace, your passions.<br>We craft the perfect itinerary — optimised, curated, <em>yours</em>.</p>
+      <button class="hero-cta" onclick="goTo('planner')"><span>✦ Start planning</span></button>
+    </div>
+    <div class="hero-features">
+      <div class="hero-feat"><div class="feat-num">9</div><div class="feat-label">Interest categories</div></div>
+      <div class="hero-feat"><div class="feat-num">60+</div><div class="feat-label">Curated locations</div></div>
+      <div class="hero-feat"><div class="feat-num">5</div><div class="feat-label">Days max</div></div>
+    </div>
+  </section>
+</div>
 
-<!-- PLANNER -->
-<section id="planner">
-  <div class="section-heading fade-in">
-    <h2>Craft your <em>itinerary</em></h2>
-    <p>Answer a few questions — our AI does the rest</p>
+<!-- ══ PAGE 2: PLANNER ══ -->
+<div class="page" id="page-planner">
+  <div class="page-header">
+    <h1>Craft your <em>itinerary</em></h1>
+    <p>Answer a few questions — your perfect Paris awaits</p>
   </div>
+  <div class="planner-wrap">
 
-  <div class="planner-form fade-in">
-    <div class="form-grid">
+    <!-- FORM -->
+    <div class="planner-form" id="planner-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Number of days</label>
+          <select class="form-select" id="num-days">
+            <option value="1">1 day — quick escape</option>
+            <option value="2">2 days — weekend break</option>
+            <option value="3" selected>3 days — classic Paris</option>
+            <option value="4">4 days — deep dive</option>
+            <option value="5">5 days — full immersion</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Travel pace</label>
+          <select class="form-select" id="pace">
+            <option value="relaxed">Relaxed — savour every moment</option>
+            <option value="balanced" selected>Balanced — best of both worlds</option>
+            <option value="intensive">Intensive — see everything</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Budget level</label>
+          <select class="form-select" id="budget">
+            <option value="budget">Budget — smart & savvy</option>
+            <option value="mid" selected>Mid-range — comfortable</option>
+            <option value="luxury">Luxury — no compromise</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Travelling with</label>
+          <select class="form-select" id="group-type">
+            <option value="solo">Solo explorer</option>
+            <option value="couple" selected>Couple / romantic</option>
+            <option value="friends">Friends group</option>
+            <option value="family">Family with kids</option>
+          </select>
+        </div>
+      </div>
       <div class="form-group">
-        <label class="form-label">Number of days</label>
-        <select class="form-select" id="num-days">
-          <option value="1">1 day — quick escape</option>
-          <option value="2">2 days — weekend break</option>
-          <option value="3" selected>3 days — classic Paris</option>
-          <option value="4">4 days — deep dive</option>
-          <option value="5">5 days — full immersion</option>
-        </select>
+        <label class="form-label">Your interests (pick all that apply)</label>
+        <div class="interests-grid" id="interests-grid" style="margin-top:6px">
+          <div class="interest-chip active" data-value="art"><span class="chip-icon">🎨</span>Art & Museums</div>
+          <div class="interest-chip" data-value="food"><span class="chip-icon">🥐</span>Food & Cuisine</div>
+          <div class="interest-chip active" data-value="architecture"><span class="chip-icon">🏛️</span>Architecture</div>
+          <div class="interest-chip" data-value="shopping"><span class="chip-icon">🛍️</span>Shopping</div>
+          <div class="interest-chip" data-value="parks"><span class="chip-icon">🌿</span>Parks & Gardens</div>
+          <div class="interest-chip" data-value="nightlife"><span class="chip-icon">🥂</span>Bars & Nightlife</div>
+          <div class="interest-chip" data-value="history"><span class="chip-icon">📜</span>History</div>
+          <div class="interest-chip" data-value="fashion"><span class="chip-icon">👗</span>Fashion</div>
+          <div class="interest-chip" data-value="cinema"><span class="chip-icon">🎬</span>Cinema & Culture</div>
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Travel pace</label>
-        <select class="form-select" id="pace">
-          <option value="relaxed">Relaxed — savour every moment</option>
-          <option value="balanced" selected>Balanced — best of both worlds</option>
-          <option value="intensive">Intensive — see everything</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Budget level</label>
-        <select class="form-select" id="budget">
-          <option value="budget">Budget — smart & savvy</option>
-          <option value="mid" selected>Mid-range — comfortable</option>
-          <option value="luxury">Luxury — no compromise</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Travelling with</label>
-        <select class="form-select" id="group-type">
-          <option value="solo">Solo explorer</option>
-          <option value="couple" selected>Couple / romantic</option>
-          <option value="friends">Friends group</option>
-          <option value="family">Family with kids</option>
-        </select>
-      </div>
+      <button class="generate-btn" id="generate-btn" onclick="generateItinerary()">
+        <span id="btn-text">✦ Generate my Paris itinerary</span>
+      </button>
+      <div class="error-box" id="error-box"></div>
     </div>
 
-    <div class="form-group full">
-      <label class="form-label">Your interests (pick all that apply)</label>
-      <div class="interests-grid" id="interests-grid">
-        <div class="interest-chip active" data-value="art"><span class="chip-icon">🎨</span>Art & Museums</div>
-        <div class="interest-chip" data-value="food"><span class="chip-icon">🥐</span>Food & Cuisine</div>
-        <div class="interest-chip active" data-value="architecture"><span class="chip-icon">🏛️</span>Architecture</div>
-        <div class="interest-chip" data-value="shopping"><span class="chip-icon">🛍️</span>Shopping</div>
-        <div class="interest-chip" data-value="parks"><span class="chip-icon">🌿</span>Parks & Gardens</div>
-        <div class="interest-chip" data-value="nightlife"><span class="chip-icon">🥂</span>Bars & Nightlife</div>
-        <div class="interest-chip" data-value="history"><span class="chip-icon">📜</span>History</div>
-        <div class="interest-chip" data-value="fashion"><span class="chip-icon">👗</span>Fashion</div>
-        <div class="interest-chip" data-value="cinema"><span class="chip-icon">🎬</span>Cinema & Culture</div>
+    <!-- LOADING -->
+    <div class="loading-state" id="loading-state">
+      <div class="loading-eiffel">🗼</div>
+      <div class="loading-text" id="loading-text">Planning your Paris adventure...</div>
+      <div class="loading-sub" id="loading-sub">Optimising your route across the arrondissements</div>
+      <br>
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- ITINERARY RESULT — stays in Planner page -->
+    <div id="itinerary-result" style="display:none; margin-top:1.5rem;">
+
+      <!-- Section divider -->
+      <div class="results-divider">
+        <span>Your suggested locations</span>
+        <div class="results-divider-line"></div>
+        <button class="regenerate-link" onclick="generateItinerary()">↺ Generate new</button>
       </div>
-    </div>
 
-    <button class="generate-btn" id="generate-btn" onclick="generateItinerary()">
-      <span id="btn-text">✦ Generate my Paris itinerary</span>
-    </button>
-    <div class="error-box" id="error-box"></div>
-  </div>
+      <div id="days-container"></div>
 
-  <!-- LOADING -->
-  <div class="loading-state" id="loading-state">
-    <div class="loading-eiffel">🗼</div>
-    <div class="loading-text" id="loading-text">Planning your Paris adventure...</div>
-    <div class="loading-sub" id="loading-sub">Optimising your route across the arrondissements</div>
-    <br>
-    <div class="loading-dots"><span></span><span></span><span></span></div>
-  </div>
-
-  <!-- RESULT -->
-  <div id="itinerary-result">
-    <div class="itinerary-header">
-      <div class="itinerary-meta">
-        <div class="meta-item"><strong id="res-days">3</strong>Days</div>
-        <div class="meta-item"><strong id="res-pace">Balanced</strong>Pace</div>
-        <div class="meta-item"><strong id="res-budget">Mid-range</strong>Budget</div>
-        <div class="meta-item"><strong id="res-group">Couple</strong>Travelling as</div>
+      <!-- Sticky add-to-trip bar -->
+      <div class="add-to-trip-bar" id="add-to-trip-bar">
+        <div class="add-bar-left">
+          <span class="add-bar-count"><span id="new-sel-num">0</span> new</span>
+          <span class="add-bar-label">locations selected</span>
+        </div>
+        <button class="add-to-trip-btn" id="add-to-trip-btn" onclick="addToTrip()">
+          ✦ Add to My Trip →
+        </button>
       </div>
-      <div class="itinerary-title-h" id="itinerary-tagline">Your curated Paris experience</div>
-    </div>
 
-    <div id="days-container"></div>
-
-    <div class="map-link-bar">
-      <div class="map-icon">🗺️</div>
-      <div class="map-text">All locations pinned → <a id="maps-link" href="#" target="_blank">Open full route in Google Maps</a></div>
-    </div>
-
-    <div class="itinerary-actions">
-      <button class="action-btn primary" onclick="downloadHTML()">⬇ Save as PDF</button>
-      <button class="action-btn secondary" onclick="regenerate()">↺ Regenerate</button>
-      <button class="action-btn secondary" onclick="document.getElementById('planner').scrollIntoView({behavior:'smooth'})">✎ Modify preferences</button>
-    </div>
-
-    <!-- SELECTION BAR -->
-    <div class="selection-bar" id="selection-bar">
-      <div class="sel-count"><span id="sel-count-num">0</span> locations selected</div>
-      <button class="sel-review-btn" onclick="openReview()">Review my selection →</button>
     </div>
   </div>
+</div>
 
-  <!-- REVIEW PAGE -->
-  <div id="review-page" style="display:none;">
-    <div class="review-header">
-      <div class="review-header-inner">
-        <div class="review-back" onclick="closeReview()">← Back to itinerary</div>
-        <h2 class="review-title">Your <em>selection</em></h2>
-        <p class="review-sub">Review your chosen locations before building your final trip</p>
+<!-- ══ PAGE 3: MY TRIP ══ -->
+<div class="page" id="page-trip">
+  <div class="trip-page-wrap">
+
+    <!-- Empty state -->
+    <div class="empty-trip" id="empty-trip">
+      <div class="empty-trip-icon">🗺️</div>
+      <h3>Your trip is empty</h3>
+      <p>Go to Planner, generate locations and add your favourites here.</p>
+      <button class="empty-trip-btn" onclick="goTo('planner')">✦ Go to Planner</button>
+    </div>
+
+    <!-- Saved trip -->
+    <div id="saved-trip" style="display:none">
+      <div class="itinerary-header">
+        <div class="itinerary-meta">
+          <div class="meta-item"><strong id="trip-count">0</strong>Locations</div>
+          <div class="meta-item"><strong id="trip-days-count">0</strong>Days</div>
+        </div>
+        <div class="itinerary-title-h">My Paris Trip</div>
+      </div>
+      <div class="visited-progress" id="visited-progress">
+        <span>Progress</span>
+        <div class="visited-progress-bar"><div class="visited-progress-fill" id="visited-fill" style="width:0%"></div></div>
+        <span class="visited-progress-text" id="visited-text">0 / 0 visited</span>
+      </div>
+      <div id="trip-days-container"></div>
+      <div class="map-link-bar">
+        <span>🗺️</span>
+        <span>Full route → <a id="maps-link" href="#" target="_blank">Open in Google Maps</a></span>
+      </div>
+      <div class="itinerary-actions">
+        <button class="action-btn primary" onclick="downloadTripPDF()">⬇ Save as PDF</button>
+        <button class="action-btn secondary" onclick="clearTrip()">✕ Clear trip</button>
       </div>
     </div>
-    <div class="review-body" id="review-body"></div>
-    <div class="review-actions">
-      <button class="action-btn primary" onclick="buildTrip()">✦ Build my final trip →</button>
-      <button class="action-btn secondary" onclick="closeReview()">← Edit selection</button>
-    </div>
-  </div>
 
-  <!-- FINAL TRIP PAGE -->
-  <div id="trip-page" style="display:none;">
-    <div class="review-header">
-      <div class="review-header-inner">
-        <div class="review-back" onclick="closeTrip()">← Back to selection</div>
-        <h2 class="review-title">Your <em>Paris trip</em></h2>
-        <p class="review-sub" id="trip-sub">Your personalised itinerary — optimised and ready to go</p>
-      </div>
-    </div>
-    <div id="trip-body"></div>
-    <div class="review-actions">
-      <button class="action-btn primary" onclick="downloadTripPDF()">⬇ Save trip as PDF</button>
-      <button class="action-btn secondary" onclick="closeTrip()">← Back</button>
-    </div>
   </div>
-</section>
+</div>
 
-<footer>
-  <strong>Paris City Break Planner</strong>
-  <br><br>
-  Crafted with AI · Optimised for unforgettable experiences
-  <br>
-  <span style="opacity:0.5">© 2025 — All routes are AI-generated and subject to seasonal changes</span>
-</footer>
+<!-- ══ REVIEW OVERLAY (floating above all pages) ══ -->
+<div class="review-overlay" id="review-overlay">
+  <div class="review-header">
+    <button class="review-back" onclick="closeReview()">← Back</button>
+    <div class="review-title">Your <em>selection</em></div>
+    <div class="review-sub" id="review-sub-text">Review and confirm your locations</div>
+  </div>
+  <div class="review-body" id="review-body"></div>
+  <div class="review-actions">
+    <button class="action-btn primary" onclick="buildTrip()">✦ Build my final trip →</button>
+    <button class="action-btn secondary" onclick="closeReview()">← Edit selection</button>
+  </div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="goTo('home')">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" id="nav-planner" onclick="goTo('planner')">
+    <span class="nav-icon">✍️</span>
+    <span class="nav-label">Planner</span>
+  </button>
+  <button class="nav-item" id="nav-trip" onclick="goTo('trip')">
+    <span class="nav-icon">🗺️</span>
+    <span class="nav-label">My Trip</span>
+    <span class="nav-badge" id="trip-badge">0</span>
+  </button>
+</nav>
 
 <script>
-// Interest chip toggle
+// ══ NAVIGATION ══
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page).classList.add('active');
+  window.scrollTo(0, 0);
+  state.currentPage = page;
+  saveState();
+}
+
+// ══ DATA ══
+const STOPS = {
+  art:[
+    {name:"Musée d'Orsay",type:"sight",description:"World's finest Impressionist collection in a stunning railway station",tags:["Impressionism","Masterpieces"],highlight:true},
+    {name:"Centre Pompidou",type:"sight",description:"Bold modern art museum with iconic inside-out architecture",tags:["Modern Art","Architecture"],highlight:false},
+    {name:"Musée Picasso",type:"sight",description:"Picasso's life work in a gorgeous 17th-century Marais mansion",tags:["Picasso","Classic"],highlight:true},
+    {name:"Palais de Tokyo",type:"sight",description:"Europe's largest contemporary art space — raw and experimental",tags:["Contemporary","Experimental"],highlight:false},
+    {name:"Galerie Perrotin",type:"sight",description:"Top contemporary gallery in Le Marais showing global artists",tags:["Gallery","Contemporary"],highlight:false},
+    {name:"Atelier des Lumières",type:"sight",description:"Immersive digital art projections in a former iron foundry",tags:["Immersive","Digital Art"],highlight:true},
+  ],
+  food:[
+    {name:"Marché d'Aligre",type:"food",description:"Paris's most authentic food market — cheese, bread, charcuterie",tags:["Market","Local"],highlight:true},
+    {name:"Du Pain et des Idées",type:"food",description:"Legendary bakery with the city's finest croissants and escargot pastry",tags:["Bakery","Pastry"],highlight:true},
+    {name:"Marché des Enfants Rouges",type:"food",description:"Paris's oldest covered market — street food from around the world",tags:["Covered Market","Street Food"],highlight:true},
+    {name:"Rue Montorgueil",type:"food",description:"Pedestrian food street packed with fromageries and charcuteries",tags:["Food Street","Gourmet"],highlight:false},
+    {name:"Stohrer Pâtisserie",type:"food",description:"Paris's oldest pastry shop, founded 1730 — historic and delicious",tags:["Historic","Pastry"],highlight:false},
+    {name:"Frenchie Bar à Vins",type:"food",description:"Acclaimed small plates and wine in an intimate Rue du Nil setting",tags:["Wine Bar","Gourmet"],highlight:true},
+  ],
+  architecture:[
+    {name:"Eiffel Tower",type:"sight",description:"The iron lady at dawn — crowds minimal, light spectacular",tags:["Iconic","Iron"],highlight:true},
+    {name:"Opéra Garnier",type:"sight",description:"Paris's most opulent building — gilded interiors and grand staircase",tags:["Baroque","Opulent"],highlight:true},
+    {name:"Sainte-Chapelle",type:"sight",description:"Gothic jewel with 15 floor-to-ceiling medieval stained glass windows",tags:["Gothic","Stained Glass"],highlight:true},
+    {name:"Pont Alexandre III",type:"sight",description:"Paris's most ornate bridge — golden statues and art nouveau lamps",tags:["Bridge","Art Nouveau"],highlight:true},
+    {name:"Passages Couverts",type:"sight",description:"19th-century glass-roofed shopping arcades — a vanishing Paris",tags:["19th Century","Arcades"],highlight:false},
+    {name:"Institut du Monde Arabe",type:"sight",description:"Jean Nouvel's mashrabiya façade that responds to sunlight",tags:["Jean Nouvel","Modern"],highlight:false},
+  ],
+  shopping:[
+    {name:"Le Marais Boutiques",type:"shop",description:"Rue des Francs-Bourgeois packed with independent concept stores",tags:["Concept Stores","Trendy"],highlight:true},
+    {name:"Merci Concept Store",type:"shop",description:"Paris's most curated concept store — fashion, design, books, café",tags:["Concept Store","Design"],highlight:true},
+    {name:"Marché aux Puces de Saint-Ouen",type:"shop",description:"World's largest antique market — 2,500 dealers across 7 markets",tags:["Antiques","Vintage"],highlight:true},
+    {name:"Galeries Lafayette",type:"shop",description:"Iconic department store under a magnificent art nouveau dome",tags:["Department Store","Iconic"],highlight:false},
+    {name:"Rue du Faubourg Saint-Honoré",type:"shop",description:"The world's most exclusive shopping street — Hermès to Chanel",tags:["Luxury","Flagship"],highlight:true},
+    {name:"La Vallée Village",type:"shop",description:"Designer outlet village — up to 60% off luxury brands",tags:["Outlet","Designer"],highlight:false},
+  ],
+  fashion:[
+    {name:"Le Marais Fashion Walk",type:"shop",description:"Epicentre of Paris cool — Isabel Marant, A.P.C., and more",tags:["Designer","Cool"],highlight:true},
+    {name:"Palais Royal Arcades",type:"shop",description:"Rick Owens, Comme des Garçons, Stella McCartney under the arches",tags:["Avant-garde","Luxury"],highlight:true},
+    {name:"Rue du Cherche-Midi",type:"shop",description:"Saint-Germain's fashion street — Sandro, Maje, & Other Stories",tags:["Parisian","Chic"],highlight:false},
+    {name:"Musée Galliera",type:"sight",description:"Paris's fashion museum in a beautiful 19th-century palace",tags:["Fashion History","Museum"],highlight:true},
+    {name:"Broken Arm Concept Store",type:"shop",description:"Hyper-curated store blending fashion, art books, and coffee",tags:["Curated","Concept"],highlight:true},
+    {name:"Porte de Vanves Flea Market",type:"shop",description:"Best flea market for vintage fashion — arrive early for finds",tags:["Vintage","Flea Market"],highlight:false},
+  ],
+  parks:[
+    {name:"Jardin du Luxembourg",type:"park",description:"Paris's most beloved park — chess, fountains, and Sunday crowds",tags:["Gardens","Serene"],highlight:true},
+    {name:"Parc des Buttes-Chaumont",type:"park",description:"Dramatic rocky park with island temple and panoramic city views",tags:["Dramatic","Views"],highlight:true},
+    {name:"Promenade Plantée",type:"park",description:"World's first elevated park — built on a disused railway viaduct",tags:["Elevated","Unique"],highlight:true},
+    {name:"Jardin des Plantes",type:"park",description:"Historic botanical garden with greenhouses and a small zoo",tags:["Botanical","Historic"],highlight:false},
+    {name:"Square du Vert-Galant",type:"park",description:"Romantic tip of Île de la Cité with Seine views on both sides",tags:["Romantic","Seine"],highlight:false},
+    {name:"Bois de Boulogne",type:"park",description:"Vast western forest with lakes, cycling paths, and picnic spots",tags:["Forest","Cycling"],highlight:false},
+  ],
+  history:[
+    {name:"Notre-Dame de Paris",type:"sight",description:"Gothic cathedral reborn — restored magnificence after 2019 fire",tags:["Gothic","Cathedral"],highlight:true},
+    {name:"The Louvre",type:"sight",description:"World's largest museum — plan ahead and pick two wings only",tags:["Museum","Iconic"],highlight:true},
+    {name:"Versailles Palace",type:"sight",description:"The Sun King's gilded palace — book skip-the-line tickets in advance",tags:["Royal","Baroque"],highlight:true},
+    {name:"Panthéon",type:"sight",description:"Neoclassical mausoleum housing Voltaire, Rousseau, Marie Curie",tags:["Mausoleum","Icons"],highlight:false},
+    {name:"Conciergerie",type:"sight",description:"Medieval prison where Marie Antoinette awaited her fate",tags:["Medieval","Revolution"],highlight:false},
+    {name:"Musée de Cluny",type:"sight",description:"Medieval art museum built on Roman ruins — the Lady and the Unicorn",tags:["Medieval","Tapestry"],highlight:false},
+  ],
+  nightlife:[
+    {name:"Candelaria Cocktail Bar",type:"food",description:"Hidden speakeasy behind a taqueria — world-class craft cocktails",tags:["Speakeasy","Cocktails"],highlight:true},
+    {name:"Caveau de la Huchette",type:"sight",description:"Jazz and swing in a medieval cave since 1946 — legendary venue",tags:["Jazz","Cave"],highlight:true},
+    {name:"Le Perchoir Rooftop Bar",type:"food",description:"Rooftop bar with panoramic Paris views and craft cocktails",tags:["Rooftop","Views"],highlight:true},
+    {name:"Rosa Bonheur sur Seine",type:"food",description:"Festive barge bar on the Seine with tapas and dancing",tags:["Barge","Festive"],highlight:false},
+    {name:"Silencio Club",type:"sight",description:"David Lynch-designed club — opens to public after 11pm",tags:["Design","Club"],highlight:false},
+    {name:"Le Baron Club",type:"sight",description:"Intimate rock and electronic club beloved by Paris night owls",tags:["Electronic","Intimate"],highlight:false},
+  ],
+  cinema:[
+    {name:"Cinémathèque Française",type:"sight",description:"The world's greatest film archive — exhibitions and daily screenings",tags:["Film History","Archive"],highlight:true},
+    {name:"Shakespeare and Company",type:"shop",description:"Legendary English bookshop by Notre-Dame — literary pilgrimage",tags:["Bookshop","Literary"],highlight:true},
+    {name:"Le Champo Cinema",type:"sight",description:"Classic arthouse cinema beloved by Truffaut and Godard",tags:["Arthouse","Classic"],highlight:false},
+    {name:"Fondation Cartier",type:"sight",description:"Jean Nouvel's glass building — bold contemporary exhibitions",tags:["Contemporary","Glass"],highlight:false},
+    {name:"La Pagode Cinema",type:"sight",description:"Screening films inside a Japanese pagoda since 1931",tags:["Historic","Unique"],highlight:true},
+    {name:"Forum des Images",type:"sight",description:"Paris's dedicated city film archive — free screenings and exhibitions",tags:["Cinema","Archive"],highlight:false},
+  ]
+};
+
+const RESTAURANTS={
+  budget:[
+    {name:"Bouillon Chartier",type:"Classic French brasserie",stars:4,price:"€"},
+    {name:"L'As du Fallafel",type:"Falafel & Middle Eastern",stars:5,price:"€"},
+    {name:"Chez Janou",type:"Provençal bistro",stars:4,price:"€€"},
+    {name:"Le Petit Cambodge",type:"Cambodian street food",stars:4,price:"€€"},
+    {name:"Café de Flore",type:"Historic Parisian café",stars:4,price:"€€"},
+    {name:"Pink Mamma",type:"Italian trattoria",stars:4,price:"€€"},
+  ],
+  mid:[
+    {name:"Septime",type:"Bistronomie — market-driven",stars:5,price:"€€€"},
+    {name:"Le Comptoir du Relais",type:"Saint-Germain brasserie",stars:4,price:"€€€"},
+    {name:"Frenchie",type:"French-American fusion",stars:5,price:"€€€"},
+    {name:"Bones",type:"Natural wine & small plates",stars:4,price:"€€€"},
+    {name:"Au Passage",type:"Wine bar & sharing plates",stars:4,price:"€€€"},
+    {name:"Clown Bar",type:"Neo-bistro with heritage tiles",stars:5,price:"€€€"},
+  ],
+  luxury:[
+    {name:"Le Grand Véfour",type:"Michelin 2★ — Napoleon's table",stars:5,price:"€€€€"},
+    {name:"Taillevent",type:"Michelin 1★ — classic haute cuisine",stars:5,price:"€€€€"},
+    {name:"Kei",type:"Michelin 2★ — French-Japanese fusion",stars:5,price:"€€€€"},
+    {name:"Le Cinq",type:"Michelin 3★ — Four Seasons",stars:5,price:"€€€€€"},
+    {name:"L'Ambroisie",type:"Michelin 3★ — Place des Vosges",stars:5,price:"€€€€€"},
+    {name:"Lasserre",type:"Michelin 1★ — retractable roof",stars:5,price:"€€€€"},
+  ]
+};
+
+const TIPS={
+  art:["Book Musée d'Orsay tickets online — queues can be 2 hours long","Visit galleries on Thursday evenings — many open late and free","The Pompidou rooftop terrace has the best 360° city view — free with ticket"],
+  food:["Markets close by 1pm — arrive before 11am for the best selection","Ask for 'formule déjeuner' at any bistro for a 3-course lunch under €20","The best baguettes are marked 'Tradition' — avoid anything labelled 'Classique'"],
+  architecture:["Golden hour is 7–8am — monuments without crowds and perfect light","Many buildings open free on the first Sunday of each month","Look up — Paris's most beautiful details are above street level"],
+  shopping:["Most boutiques open at 11am — plan coffee and pastries first","The Marché aux Puces is closed Monday — plan for Saturday or Sunday","Bring a fold-up tote bag — plastic bags are banned in French shops"],
+  fashion:["Le Marais shops stay open on Sundays — unique in Paris","Vintage stores in Pigalle offer the best price-to-quality ratio","Many designer boutiques offer tax refunds (détaxe) for non-EU visitors"],
+  parks:["Bring a picnic — eating on park lawns is encouraged","Jardin du Luxembourg rents metal chairs — grab one by the fountain","The Promenade Plantée is quiet on weekday mornings — best time to visit"],
+  history:["Book Versailles skip-the-line tickets 2 weeks in advance","The Louvre is less crowded on Wednesday and Friday evenings","A Paris Museum Pass pays for itself in 2 days if you love history"],
+  nightlife:["Paris nightlife starts late — dinner at 8pm, bars from 10pm","Most cocktail bars don't require reservations — just arrive before 9pm","The last Métro runs around 1:15am — plan your night accordingly"],
+  cinema:["Cinémathèque screenings are in original language (VO) with subtitles","Shakespeare & Company has a free upstairs reading room — hidden gem","La Pagode requires booking ahead — only 60 seats in the main hall"],
+};
+
+const TAGLINES={
+  art:"Where every wall tells a story and every gallery holds a revelation",
+  food:"A culinary journey through the world's greatest food city",
+  architecture:"Reading Paris through its stones, steel, and stained glass",
+  shopping:"The ultimate retail pilgrimage — from flea markets to flagships",
+  fashion:"Dressing in the city that invented style",
+  parks:"Paris at its most serene — gardens, rivers, and breathing space",
+  history:"Walking through twenty centuries of history in the City of Light",
+  nightlife:"Paris after dark — cocktails, jazz, and the city that never really sleeps",
+  cinema:"Paris through the lens — culture, film, and literary adventure",
+};
+
+// ══ STATE (persisted in localStorage) ══
+let state = {
+  masterSelection: [],
+  newSelections:   [],
+  currentShown:    [],
+  visited:         [],
+  lastItinerary:   null,
+  currentPage:     'home',
+  prefs: {days:'3',pace:'balanced',budget:'mid',group:'couple',interests:['art','architecture']}
+};
+
+function saveState() {
+  try { localStorage.setItem('pcp_state', JSON.stringify({...state, _v: SCHEMA_VERSION})); } catch(e){}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('pcp_state');
+    if (raw) {
+      const saved = JSON.parse(raw);
+      // Deep merge — keep defaults for missing keys
+      if (Array.isArray(saved.masterSelection)) state.masterSelection = saved.masterSelection;
+      if (Array.isArray(saved.currentShown)) state.currentShown = saved.currentShown;
+      if (Array.isArray(saved.newSelections)) state.newSelections = saved.newSelections;
+      if (Array.isArray(saved.visited)) state.visited = saved.visited;
+      if (saved.lastItinerary) state.lastItinerary = saved.lastItinerary;
+      if (saved.currentPage) state.currentPage = saved.currentPage;
+      if (saved.prefs) state.prefs = {...state.prefs, ...saved.prefs};
+    }
+  } catch(e){ console.warn('loadState error:', e); }
+}
+
+function restoreUI() {
+  // Restore preferences form
+  const {days,pace,budget,group,interests} = state.prefs;
+  if (days) document.getElementById('num-days').value = days;
+  if (pace) document.getElementById('pace').value = pace;
+  if (budget) document.getElementById('budget').value = budget;
+  if (group) document.getElementById('group-type').value = group;
+  if (interests) {
+    document.querySelectorAll('.interest-chip').forEach(c => {
+      c.classList.toggle('active', interests.includes(c.dataset.value));
+    });
+  }
+
+  // Restore itinerary suggestions in Planner page
+  if (state.lastItinerary && state.lastItinerary.days && state.lastItinerary.days.length) {
+    renderItinerary(state.lastItinerary);
+  }
+
+  // Always render trip (shows empty state or saved locations)
+  renderTrip();
+  updateBadge();
+  updateNewSelCount();
+
+  // Go to saved page (but not trip page if masterSelection is empty — go home instead)
+  const page = (state.currentPage === 'trip' && state.masterSelection.length === 0)
+    ? 'home'
+    : (state.currentPage || 'home');
+  goTo(page);
+}
+
+function updateBadge() {
+  const n = state.masterSelection.length;
+  const badge = document.getElementById('trip-badge');
+  badge.textContent = n;
+  badge.classList.toggle('visible', n > 0);
+}
+
+// ══ INTEREST CHIPS ══
 document.querySelectorAll('.interest-chip').forEach(chip => {
-  chip.addEventListener('click', () => chip.classList.toggle('active'));
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('active');
+    state.prefs.interests = [...document.querySelectorAll('.interest-chip.active')].map(c => c.dataset.value);
+    saveState();
+  });
 });
 
-// Scroll fade-in
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-// Toggle day sections
-function toggleDay(header) {
-  const body = header.nextElementSibling;
-  header.classList.toggle('open');
-  body.classList.toggle('open');
-}
-
-function updateSelectionCount() {
-  const checkedNow = document.querySelectorAll('.stop-checkbox:checked').length;
-  const savedCount = (window._masterSelection || []).length;
-  // Deduplicate: checked names that aren't already in master
-  const checkedNames = new Set([...document.querySelectorAll('.stop-checkbox:checked')].map(cb => cb.dataset.name));
-  const masterNames = new Set((window._masterSelection || []).map(s => s.name));
-  const newOnesCount = [...checkedNames].filter(n => !masterNames.has(n)).length;
-  const total = savedCount + newOnesCount;
-
-  document.getElementById('sel-count-num').textContent = total;
-  // Dim deselected stops
-  document.querySelectorAll('.stop-checkbox').forEach(cb => {
-    const item = cb.closest('.stop-item');
-    if (item) item.classList.toggle('deselected', !cb.checked);
-  });
-}
-
-function openReview() {
-  const typeEmoji = { sight: '🏛️', food: '🍽️', transport: '🚇', shop: '🛍️', park: '🌿' };
-
-  // Collect newly checked stops from current itinerary
-  const newlyChecked = [...document.querySelectorAll('.stop-checkbox:checked')].map(cb => ({
-    name: cb.dataset.name,
-    time: cb.dataset.time,
-    type: cb.dataset.type,
-    desc: cb.dataset.desc,
-    google: cb.dataset.google,
-    day: cb.dataset.day,
-    daytitle: cb.dataset.daytitle
-  }));
-
-  // Merge with previously saved selections (avoid duplicates)
-  const existing = window._masterSelection || [];
-  const existingNames = new Set(existing.map(s => s.name));
-  const newOnes = newlyChecked.filter(s => !existingNames.has(s.name));
-  const merged = [...existing, ...newOnes];
-
-  if (merged.length === 0) {
-    alert('Please select at least one location before reviewing.');
-    return;
-  }
-
-  // Save merged list as master
-  window._masterSelection = merged;
-
-  // Group by day
-  const byDay = {};
-  merged.forEach(stop => {
-    const d = stop.day;
-    if (!byDay[d]) byDay[d] = { title: stop.daytitle, stops: [] };
-    byDay[d].stops.push(stop);
-  });
-
-  let html = '';
-  Object.keys(byDay).sort((a,b) => parseInt(a)-parseInt(b)).forEach(d => {
-    const group = byDay[d];
-    html += `<div class="review-day-group">
-      <div class="review-day-title">
-        <span class="review-day-num">${d}</span>
-        ${group.title}
-        <span style="font-size:12px;color:var(--ink-light);margin-left:auto;font-family:var(--font-body);font-style:normal;">${group.stops.length} stop${group.stops.length !== 1 ? 's' : ''}</span>
-      </div>`;
-    group.stops.forEach(stop => {
-      html += `<div class="review-stop-row">
-        <div class="review-stop-time">${stop.time}</div>
-        <div class="review-stop-icon">${typeEmoji[stop.type] || '📍'}</div>
-        <div class="review-stop-info">
-          <a class="review-stop-name" href="${stop.google}" target="_blank" rel="noopener">${stop.name} <span class="ext-icon">↗</span></a>
-          <div class="review-stop-desc">${stop.desc}</div>
-        </div>
-        <button class="review-remove" title="Remove" onclick="removeFromReview('${stop.name.replace(/'/g,"\\'")}', this)">✕</button>
-      </div>`;
-    });
-    html += `</div>`;
-  });
-
-  document.getElementById('review-body').innerHTML = html;
-  document.getElementById('itinerary-result').style.display = 'none';
-  document.getElementById('review-page').style.display = 'block';
-  document.getElementById('planner').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function removeFromReview(name, btn) {
-  // Remove from master selection
-  window._masterSelection = (window._masterSelection || []).filter(s => s.name !== name);
-  // Uncheck original checkbox if still visible
-  document.querySelectorAll('.stop-checkbox').forEach(cb => {
-    if (cb.dataset.name === name) { cb.checked = false; }
-  });
-  updateSelectionCount();
-  // Remove row
-  btn.closest('.review-stop-row').remove();
-  // Remove empty day groups
-  document.querySelectorAll('.review-day-group').forEach(g => {
-    if (g.querySelectorAll('.review-stop-row').length === 0) g.remove();
-  });
-  if (document.getElementById('review-body').querySelectorAll('.review-stop-row').length === 0) {
-    document.getElementById('review-body').innerHTML = '<div class="review-empty">No locations left. Go back and add some!</div>';
-  }
-}
-
-function closeReview() {
-  document.getElementById('review-page').style.display = 'none';
-  document.getElementById('itinerary-result').style.display = 'block';
-  document.getElementById('itinerary-result').scrollIntoView({ behavior: 'smooth' });
-}
-
-function buildTrip() {
-  const master = window._masterSelection || [];
-  if (master.length === 0) {
-    alert('No locations selected. Please go back and add some.');
-    return;
-  }
-
-  const typeEmoji = { sight: '🏛️', food: '🍽️', transport: '🚇', shop: '🛍️', park: '🌿' };
-
-  // Group by day number, preserve all stops
-  const byDay = {};
-  master.forEach(stop => {
-    const d = stop.day || '1';
-    if (!byDay[d]) byDay[d] = { title: stop.daytitle || `Day ${d}`, stops: [] };
-    byDay[d].stops.push(stop);
-  });
-
-  const allStops = master;
-  const mapsUrl = `https://www.google.com/maps/dir/${allStops.map(s => encodeURIComponent(s.name + ' Paris')).join('/')}`;
-
-  let tripHtml = `<div style="max-width:900px;margin:0 auto;padding:2rem;">
-    <div class="trip-map-bar">
-      🗺️ <span>Route for all ${allStops.length} locations →
-      <a href="${mapsUrl}" target="_blank">Open in Google Maps</a></span>
-    </div>`;
-
-  Object.keys(byDay).sort((a,b) => parseInt(a)-parseInt(b)).forEach(d => {
-    const group = byDay[d];
-    tripHtml += `<div class="review-day-group">
-      <div class="review-day-title">
-        <span class="review-day-num">${d}</span>
-        ${group.title}
-        <span style="font-size:12px;color:var(--ink-light);margin-left:auto;font-family:var(--font-body);font-style:normal;">${group.stops.length} stop${group.stops.length !== 1 ? 's' : ''}</span>
-      </div>`;
-    group.stops.forEach(stop => {
-      const mapUrl = `https://www.google.com/maps/search/${encodeURIComponent(stop.name + ' Paris')}`;
-      tripHtml += `<div class="review-stop-row">
-        <div class="review-stop-time">${stop.time || ''}</div>
-        <div class="review-stop-icon">${typeEmoji[stop.type] || '📍'}</div>
-        <div class="review-stop-info">
-          <a class="review-stop-name" href="${stop.google}" target="_blank" rel="noopener">${stop.name} <span class="ext-icon">↗</span></a>
-          <div class="review-stop-desc">${stop.desc}</div>
-        </div>
-        <a href="${mapUrl}" target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none;flex-shrink:0;padding:4px 8px;border:1px solid var(--gold);">📍 Map</a>
-      </div>`;
-    });
-    tripHtml += `</div>`;
-  });
-
-  // Tips from last itinerary
-  const it = window._lastItinerary;
-  if (it && it.tips && it.tips.length) {
-    tripHtml += `<div class="trip-tips">
-      <div class="trip-tips-title">Local insider tips</div>
-      <ul>${it.tips.map(t => `<li>${t}</li>`).join('')}</ul>
-    </div>`;
-  }
-  tripHtml += `</div>`;
-
-  const numDays = Object.keys(byDay).length;
-  document.getElementById('trip-sub').textContent = `${allStops.length} locations · ${numDays} day${numDays !== 1 ? 's' : ''} · your personalised Paris`;
-  document.getElementById('trip-body').innerHTML = tripHtml;
-  document.getElementById('review-page').style.display = 'none';
-  document.getElementById('trip-page').style.display = 'block';
-  document.getElementById('planner').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  window._finalTrip = { byDay, allStops, mapsUrl, tips: it ? it.tips : [] };
-}
-
-function closeTrip() {
-  document.getElementById('trip-page').style.display = 'none';
-  document.getElementById('review-page').style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function downloadTripPDF() {
-  if (!window._finalTrip) return;
-  const { byDay, allStops, mapsUrl, tips } = window._finalTrip;
-  const typeEmoji = { sight: '▲', food: '●', shop: '◆', park: '✿', transport: '→' };
-
-  const daysHTML = Object.keys(byDay).sort().map(d => {
-    const group = byDay[d];
-    return `<div class="day-block">
-      <div class="day-hdr"><div class="day-num">${d}</div><div class="day-ttl">${group.title}</div></div>
-      ${group.stops.map(s => `
-        <div class="stop">
-          <div class="stop-left">
-            <div class="stop-ico ${s.type}">${typeEmoji[s.type]||'●'}</div>
-            <div class="stop-time">${s.time}</div>
-          </div>
-          <div class="stop-right">
-            <div class="stop-name">${s.name}</div>
-            <div class="stop-desc">${s.desc}</div>
-          </div>
-        </div>`).join('')}
-    </div>`;
-  }).join('');
-
-  const tipsHTML = tips.length ? `<div class="tips-block">
-    <div class="tips-lbl">Local Insider Tips</div>
-    ${tips.map(t => `<div class="tip">→ ${t}</div>`).join('')}
-  </div>` : '';
-
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>My Paris Trip</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A1612;padding:2rem;font-size:12px}
-.hdr{background:#1A1612;color:#F5F0E8;padding:20px 24px 16px;margin-bottom:2px}
-.hdr-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;font-style:italic;color:#F0DFA0;margin-bottom:6px}
-.hdr-sub{font-size:11px;color:rgba(245,240,232,0.55);letter-spacing:.08em}
-.map-bar{background:white;border:1px solid #EBE4D6;padding:8px 14px;font-size:11px;color:#6B5E56;margin-bottom:12px}
-.map-bar a{color:#8B2635}
-.day-block{background:white;border:1px solid #EBE4D6;border-top:none;page-break-inside:avoid}
-.day-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#F5F0E8;border-bottom:1px solid #EBE4D6}
-.day-num{width:26px;height:26px;background:#1A1612;color:#F5F0E8;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:13px;border-radius:50%;flex-shrink:0}
-.day-ttl{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;font-style:italic}
-.stop{display:flex;gap:10px;padding:8px 14px;border-bottom:.5px solid #EBE4D6}
-.stop:last-child{border-bottom:none}
-.stop-left{display:flex;flex-direction:column;align-items:center;width:32px;flex-shrink:0}
-.stop-ico{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
-.stop-ico.sight{background:#EBE4D6;color:#3D3530}.stop-ico.food{background:#FDECEA;color:#8B2635}
-.stop-ico.shop{background:#EDE8F5;color:#534AB7}.stop-ico.park{background:#E8F0E9;color:#5C7A5F}
-.stop-ico.transport{background:#E6F1FB;color:#185FA5}
-.stop-time{font-size:9px;color:#B8860B;text-align:center;margin-top:2px;font-weight:500}
-.stop-right{flex:1}
-.stop-name{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;margin-bottom:1px}
-.stop-desc{font-size:10px;color:#6B5E56;line-height:1.5}
-.tips-block{margin-top:12px;padding:10px 14px;border-left:3px solid #B8860B;background:rgba(240,223,160,.12)}
-.tips-lbl{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#B8860B;margin-bottom:6px}
-.tip{font-size:10px;color:#3D3530;line-height:1.6;margin-bottom:3px}
-.print-btn{position:fixed;top:14px;right:14px;background:#1A1612;color:#F5F0E8;border:none;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
-.print-btn:hover{background:#8B2635}
-@media print{.print-btn{display:none!important}body{background:white;padding:0}.day-block{page-break-inside:avoid}}
-</style></head><body>
-<button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
-<div class="hdr">
-  <div class="hdr-title">My Paris Trip</div>
-  <div class="hdr-sub">${allStops.length} LOCATIONS · AI-POWERED CITY BREAK PLANNER</div>
-</div>
-<div class="map-bar">🗺️ Full route → <a href="${mapsUrl}" target="_blank">Open in Google Maps</a></div>
-${daysHTML}
-${tipsHTML}
-</body></html>`;
-
-  const win = window.open('', '_blank', 'width=800,height=900');
-  if (!win) { alert('Allow pop-ups and try again.'); return; }
-  win.document.write(html);
-  win.document.close();
-}
-
-function regenerate() {
-  // Save currently selected stop names before clearing the itinerary
-  window._savedSelections = [...document.querySelectorAll('.stop-checkbox:checked')]
-    .map(cb => cb.dataset.name);
-  document.getElementById('itinerary-result').classList.remove('visible');
-  document.getElementById('itinerary-result').style.display = 'none';
-  generateItinerary();
-}
-
+// ══ GENERATE ══
 async function generateItinerary() {
   const days = document.getElementById('num-days').value;
   const pace = document.getElementById('pace').value;
@@ -1148,537 +817,787 @@ async function generateItinerary() {
 
   if (interests.length === 0) {
     const err = document.getElementById('error-box');
-    err.textContent = 'Please select at least one interest before generating your itinerary.';
+    err.textContent = 'Please select at least one interest.';
     err.classList.add('visible');
     return;
   }
   document.getElementById('error-box').classList.remove('visible');
 
-  // Show loading
+  state.prefs = {days, pace, budget, group, interests};
+  saveState();
+
+  // Hide results, show loading — stay on planner page
   document.getElementById('itinerary-result').style.display = 'none';
-  document.getElementById('itinerary-result').classList.remove('visible');
   const loading = document.getElementById('loading-state');
   loading.classList.add('visible');
   const btn = document.getElementById('generate-btn');
   btn.disabled = true;
 
-  const loadingMessages = [
-    ['Mapping your Paris...', 'Plotting the optimal route across arrondissements'],
-    ['Curating experiences...', 'Matching places to your interests & pace'],
-    ['Finding hidden gems...', 'Sourcing the best restaurants near your route'],
-    ['Finalising your guide...', 'Almost ready — polishing the details'],
+  // Scroll to loading
+  loading.scrollIntoView({behavior:'smooth', block:'start'});
+
+  const msgs = [
+    ['Mapping your Paris...','Plotting the optimal route across arrondissements'],
+    ['Curating experiences...','Matching places to your interests & pace'],
+    ['Finding hidden gems...','Sourcing the best restaurants near your route'],
+    ['Finalising your guide...','Almost ready — polishing the details'],
   ];
-  let msgIdx = 0;
-  const msgInterval = setInterval(() => {
-    msgIdx = (msgIdx + 1) % loadingMessages.length;
-    document.getElementById('loading-text').textContent = loadingMessages[msgIdx][0];
-    document.getElementById('loading-sub').textContent = loadingMessages[msgIdx][1];
-  }, 2500);
+  let mi = 0;
+  const interval = setInterval(() => {
+    mi = (mi+1) % msgs.length;
+    document.getElementById('loading-text').textContent = msgs[mi][0];
+    document.getElementById('loading-sub').textContent = msgs[mi][1];
+  }, 2400);
 
-  const paceLabel = { relaxed: 'Relaxed', balanced: 'Balanced', intensive: 'Intensive' }[pace];
-  const budgetLabel = { budget: 'Budget', mid: 'Mid-range', luxury: 'Luxury' }[budget];
-  const groupLabel = { solo: 'Solo', couple: 'Couple', friends: 'Friends', family: 'Family' }[group];
+  await new Promise(r => setTimeout(r, 2000));
+  clearInterval(interval);
 
-  const STOPS = {
-    art: [
-      { name: "Musée d'Orsay", type: "sight", description: "World's finest Impressionist collection in a stunning railway station", tags: ["Impressionism", "Masterpieces"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Musee_d_Orsay_from_opposite_bank_of_the_Seine.jpg/640px-Musee_d_Orsay_from_opposite_bank_of_the_Seine.jpg" },
-      { name: "Centre Pompidou", type: "sight", description: "Bold modern art museum with iconic inside-out architecture", tags: ["Modern Art", "Architecture"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Centre_Georges_Pompidou_2.jpg/640px-Centre_Georges_Pompidou_2.jpg" },
-      { name: "Musée Picasso", type: "sight", description: "Picasso's life work in a gorgeous 17th-century Marais mansion", tags: ["Picasso", "Classic"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Paris_75003_Rue_de_Thorigny_05a_H%C3%B4tel_Sal%C3%A9.jpg/640px-Paris_75003_Rue_de_Thorigny_05a_H%C3%B4tel_Sal%C3%A9.jpg" },
-      { name: "Palais de Tokyo", type: "sight", description: "Europe's largest contemporary art space — raw and experimental", tags: ["Contemporary", "Experimental"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Palais_de_Tokyo.jpg/640px-Palais_de_Tokyo.jpg" },
-      { name: "Galerie Perrotin", type: "sight", description: "Top contemporary gallery in Le Marais showing global artists", tags: ["Gallery", "Contemporary"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
-      { name: "Atelier des Lumières", type: "sight", description: "Immersive digital art projections in a former iron foundry", tags: ["Immersive", "Digital Art"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Atelier_des_lumi%C3%A8res_Paris.jpg/640px-Atelier_des_lumi%C3%A8res_Paris.jpg" },
-    ],
-    food: [
-      { name: "Marché d'Aligre", type: "food", description: "Paris's most authentic food market — cheese, bread, charcuterie", tags: ["Market", "Local"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Marche_Aligre_Paris.jpg/640px-Marche_Aligre_Paris.jpg" },
-      { name: "Du Pain et des Idées", type: "food", description: "Legendary bakery with the city's finest croissants and escargot pastry", tags: ["Bakery", "Pastry"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Du_pain_et_des_id%C3%A9es%2C_exterior%2C_Paris.jpg/640px-Du_pain_et_des_id%C3%A9es%2C_exterior%2C_Paris.jpg" },
-      { name: "Marché des Enfants Rouges", type: "food", description: "Paris's oldest covered market — street food from around the world", tags: ["Covered Market", "Street Food"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/March%C3%A9_des_Enfants_Rouges_Paris.jpg/640px-March%C3%A9_des_Enfants_Rouges_Paris.jpg" },
-      { name: "Rue Montorgueil", type: "food", description: "Pedestrian food street packed with fromageries and charcuteries", tags: ["Food Street", "Gourmet"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Rue_Montorgueil_Paris.jpg/640px-Rue_Montorgueil_Paris.jpg" },
-      { name: "Stohrer Pâtisserie", type: "food", description: "Paris's oldest pastry shop, founded 1730 — historic and delicious", tags: ["Historic", "Pastry"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Stohrer_boulangerie_rue_Montorgueil.jpg/640px-Stohrer_boulangerie_rue_Montorgueil.jpg" },
-      { name: "Frenchie Bar à Vins", type: "food", description: "Acclaimed small plates and wine in an intimate Rue du Nil setting", tags: ["Wine Bar", "Gourmet"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Rue_du_Nil_Paris.jpg/640px-Rue_du_Nil_Paris.jpg" },
-    ],
-    architecture: [
-      { name: "Eiffel Tower", type: "sight", description: "The iron lady at dawn — crowds minimal, light spectacular", tags: ["Iconic", "Iron"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/640px-Tour_Eiffel_Wikimedia_Commons.jpg" },
-      { name: "Opéra Garnier", type: "sight", description: "Paris's most opulent building — gilded interiors and grand staircase", tags: ["Baroque", "Opulent"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Paris_Opera_full_frontal_architecture%2C_May_2011.jpg/640px-Paris_Opera_full_frontal_architecture%2C_May_2011.jpg" },
-      { name: "Sainte-Chapelle", type: "sight", description: "Gothic jewel with 15 floor-to-ceiling medieval stained glass windows", tags: ["Gothic", "Stained Glass"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Sainte_Chapelle_-_Upper_Level.jpg/640px-Sainte_Chapelle_-_Upper_Level.jpg" },
-      { name: "Pont Alexandre III", type: "sight", description: "Paris's most ornate bridge — golden statues and art nouveau lamps", tags: ["Bridge", "Art Nouveau"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Pont_Alexander_III_from_Pont_de_la_Concorde%2C_Paris_June_2015.jpg/640px-Pont_Alexander_III_from_Pont_de_la_Concorde%2C_Paris_June_2015.jpg" },
-      { name: "Passages Couverts", type: "sight", description: "19th-century glass-roofed shopping arcades — a vanishing Paris", tags: ["19th Century", "Arcades"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Galerie_Vivienne_Paris.jpg/640px-Galerie_Vivienne_Paris.jpg" },
-      { name: "Institut du Monde Arabe", type: "sight", description: "Jean Nouvel's mashrabiya façade that responds to sunlight", tags: ["Jean Nouvel", "Modern"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Institut_du_Monde_Arabe%2C_Paris.jpg/640px-Institut_du_Monde_Arabe%2C_Paris.jpg" },
-    ],
-    shopping: [
-      { name: "Le Marais Boutiques", type: "shop", description: "Rue des Francs-Bourgeois packed with independent concept stores", tags: ["Concept Stores", "Trendy"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Rue_des_Francs-Bourgeois_Paris.jpg/640px-Rue_des_Francs-Bourgeois_Paris.jpg" },
-      { name: "Merci Concept Store", type: "shop", description: "Paris's most curated concept store — fashion, design, books, café", tags: ["Concept Store", "Design"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
-      { name: "Marché aux Puces de Saint-Ouen", type: "shop", description: "World's largest antique market — 2,500 dealers across 7 markets", tags: ["Antiques", "Vintage"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Marche_aux_puces_de_Saint-Ouen.jpg/640px-Marche_aux_puces_de_Saint-Ouen.jpg" },
-      { name: "Galeries Lafayette", type: "shop", description: "Iconic department store under a magnificent art nouveau dome", tags: ["Department Store", "Iconic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Galeries_Lafayette_Paris.jpg/640px-Galeries_Lafayette_Paris.jpg" },
-      { name: "Rue du Faubourg Saint-Honoré", type: "shop", description: "The world's most exclusive shopping street — Hermès to Chanel", tags: ["Luxury", "Flagship"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Faubourg_Saint-Honor%C3%A9.jpg/640px-Faubourg_Saint-Honor%C3%A9.jpg" },
-      { name: "La Vallée Village", type: "shop", description: "Designer outlet village — up to 60% off luxury brands", tags: ["Outlet", "Designer"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Vallee_Village.jpg/640px-La_Vallee_Village.jpg" },
-    ],
-    fashion: [
-      { name: "Le Marais Fashion Walk", type: "shop", description: "Epicentre of Paris cool — Isabel Marant, A.P.C., and more", tags: ["Designer", "Cool"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Rue_des_Francs-Bourgeois_Paris.jpg/640px-Rue_des_Francs-Bourgeois_Paris.jpg" },
-      { name: "Palais Royal Arcades", type: "shop", description: "Rick Owens, Comme des Garçons, Stella McCartney under the arches", tags: ["Avant-garde", "Luxury"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Paris_Palais_Royal_Jardins.JPG/640px-Paris_Palais_Royal_Jardins.JPG" },
-      { name: "Rue du Cherche-Midi", type: "shop", description: "Saint-Germain's fashion street — Sandro, Maje, & Other Stories", tags: ["Parisian", "Chic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Rue_du_Cherche-Midi_Paris.jpg/640px-Rue_du_Cherche-Midi_Paris.jpg" },
-      { name: "Musée Galliera", type: "sight", description: "Paris's fashion museum in a beautiful 19th-century palace", tags: ["Fashion History", "Museum"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Palais_Galliera_2012.jpg/640px-Palais_Galliera_2012.jpg" },
-      { name: "Broken Arm Concept Store", type: "shop", description: "Hyper-curated store blending fashion, art books, and coffee", tags: ["Curated", "Concept"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
-      { name: "Porte de Vanves Flea Market", type: "shop", description: "Best flea market for vintage fashion — arrive early for finds", tags: ["Vintage", "Flea Market"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Marche_aux_puces_de_Saint-Ouen.jpg/640px-Marche_aux_puces_de_Saint-Ouen.jpg" },
-    ],
-    parks: [
-      { name: "Jardin du Luxembourg", type: "park", description: "Paris's most beloved park — chess, fountains, and Sunday crowds", tags: ["Gardens", "Serene"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Jardin_du_Luxembourg%2C_Paris_October_2010.jpg/640px-Jardin_du_Luxembourg%2C_Paris_October_2010.jpg" },
-      { name: "Parc des Buttes-Chaumont", type: "park", description: "Dramatic rocky park with island temple and panoramic city views", tags: ["Dramatic", "Views"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Buttes_Chaumont_-_temple.jpg/640px-Buttes_Chaumont_-_temple.jpg" },
-      { name: "Promenade Plantée", type: "park", description: "World's first elevated park — built on a disused railway viaduct", tags: ["Elevated", "Unique"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Promenade_plantee_-_Paris_%28France%29.jpg/640px-Promenade_plantee_-_Paris_%28France%29.jpg" },
-      { name: "Jardin des Plantes", type: "park", description: "Historic botanical garden with greenhouses and a small zoo", tags: ["Botanical", "Historic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Jardin_des_plantes_2010.jpg/640px-Jardin_des_plantes_2010.jpg" },
-      { name: "Square du Vert-Galant", type: "park", description: "Romantic tip of Île de la Cité with Seine views on both sides", tags: ["Romantic", "Seine"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Ile_de_la_cite_1.jpg/640px-Ile_de_la_cite_1.jpg" },
-      { name: "Bois de Boulogne", type: "park", description: "Vast western forest with lakes, cycling paths, and picnic spots", tags: ["Forest", "Cycling"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bois_de_Boulogne_-_Lac_Inferieur_2.jpg/640px-Bois_de_Boulogne_-_Lac_Inferieur_2.jpg" },
-    ],
-    history: [
-      { name: "Notre-Dame de Paris", type: "sight", description: "Gothic cathedral reborn — restored magnificence after 2019 fire", tags: ["Gothic", "Cathedral"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Cath%C3%A9drale_Notre-Dame_de_Paris%2C_4_September_2023.jpg/640px-Cath%C3%A9drale_Notre-Dame_de_Paris%2C_4_September_2023.jpg" },
-      { name: "The Louvre", type: "sight", description: "World's largest museum — plan ahead and pick two wings only", tags: ["Museum", "Iconic"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/640px-Louvre_Museum_Wikimedia_Commons.jpg" },
-      { name: "Versailles Palace", type: "sight", description: "The Sun King's gilded palace — book skip-the-line tickets in advance", tags: ["Royal", "Baroque"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Pal%C3%A1cio_de_Versalhes%2C_Versalhes%2C_Fran%C3%A7a%2C_2013-08-02%2C_DD_01.jpg/640px-Pal%C3%A1cio_de_Versalhes%2C_Versalhes%2C_Fran%C3%A7a%2C_2013-08-02%2C_DD_01.jpg" },
-      { name: "Panthéon", type: "sight", description: "Neoclassical mausoleum housing Voltaire, Rousseau, Marie Curie", tags: ["Mausoleum", "Icons"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Pantheon_of_Paris_007.JPG/640px-Pantheon_of_Paris_007.JPG" },
-      { name: "Conciergerie", type: "sight", description: "Medieval prison where Marie Antoinette awaited her fate", tags: ["Medieval", "Revolution"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/La_conciergerie_et_le_pont_au_change.jpg/640px-La_conciergerie_et_le_pont_au_change.jpg" },
-      { name: "Musée de Cluny", type: "sight", description: "Medieval art museum built on Roman ruins — the Lady and the Unicorn", tags: ["Medieval", "Tapestry"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mus%C3%A9e_de_Cluny_-_fa%C3%A7ade.jpg/640px-Mus%C3%A9e_de_Cluny_-_fa%C3%A7ade.jpg" },
-    ],
-    nightlife: [
-      { name: "Candelaria Cocktail Bar", type: "food", description: "Hidden speakeasy behind a taqueria — world-class craft cocktails", tags: ["Speakeasy", "Cocktails"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Le_Marais%2C_Paris_2010.jpg/640px-Le_Marais%2C_Paris_2010.jpg" },
-      { name: "Caveau de la Huchette", type: "sight", description: "Jazz and swing in a medieval cave since 1946 — legendary venue", tags: ["Jazz", "Cave"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Caveau_de_la_Huchette.jpg/640px-Caveau_de_la_Huchette.jpg" },
-      { name: "Le Perchoir Rooftop Bar", type: "food", description: "Rooftop bar with panoramic Paris views and craft cocktails", tags: ["Rooftop", "Views"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Paris_rooftop_view.jpg/640px-Paris_rooftop_view.jpg" },
-      { name: "Rosa Bonheur sur Seine", type: "food", description: "Festive barge bar on the Seine with tapas and dancing", tags: ["Barge", "Festive"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Seine_at_night_Paris.jpg/640px-Seine_at_night_Paris.jpg" },
-      { name: "Silencio Club", type: "sight", description: "David Lynch-designed club — opens to public after 11pm", tags: ["Design", "Club"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Paris_by_night_14_juillet_2012.jpg/640px-Paris_by_night_14_juillet_2012.jpg" },
-      { name: "Le Baron Club", type: "sight", description: "Intimate rock and electronic club beloved by Paris night owls", tags: ["Electronic", "Intimate"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Paris_by_night_14_juillet_2012.jpg/640px-Paris_by_night_14_juillet_2012.jpg" },
-    ],
-    cinema: [
-      { name: "Cinémathèque Française", type: "sight", description: "The world's greatest film archive — exhibitions and daily screenings", tags: ["Film History", "Archive"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Cinematheque-francaise-bercy.jpg/640px-Cinematheque-francaise-bercy.jpg" },
-      { name: "Shakespeare and Company", type: "shop", description: "Legendary English bookshop by Notre-Dame — literary pilgrimage", tags: ["Bookshop", "Literary"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Shakespeare_and_company_bookstore_paris.jpg/640px-Shakespeare_and_company_bookstore_paris.jpg" },
-      { name: "Le Champo Cinema", type: "sight", description: "Classic arthouse cinema beloved by Truffaut and Godard", tags: ["Arthouse", "Classic"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Le_Champo_cinema_Paris.jpg/640px-Le_Champo_cinema_Paris.jpg" },
-      { name: "Fondation Cartier", type: "sight", description: "Jean Nouvel's glass building — bold contemporary exhibitions", tags: ["Contemporary", "Glass"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Fondation_Cartier_pour_l%27art_contemporain.jpg/640px-Fondation_Cartier_pour_l%27art_contemporain.jpg" },
-      { name: "La Pagode Cinema", type: "sight", description: "Screening films inside a Japanese pagoda since 1931", tags: ["Historic", "Unique"], highlight: true, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Paris_75007_Rue_de_Babylone_57_pagode_01.jpg/640px-Paris_75007_Rue_de_Babylone_57_pagode_01.jpg" },
-      { name: "Forum des Images", type: "sight", description: "Paris's dedicated city film archive — free screenings and exhibitions", tags: ["Cinema", "Archive"], highlight: false, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Forum_des_Halles_-_Paris.jpg/640px-Forum_des_Halles_-_Paris.jpg" },
-    ]
-  };
+  // Build stop pool:
+  // - exclude names already in masterSelection (saved to trip)
+  // - exclude names shown in CURRENT suggestions only (state.currentShown)
+  // shownNames is NOT used for exclusion anymore — reset between sessions is fine
+  const savedNames = new Set(state.masterSelection.map(s => s.name));
+  const currentShown = new Set(state.currentShown || []);
+  const pools = interests.map(i => (STOPS[i]||[]).slice());
+  const stopsPerDay = {relaxed:3,balanced:4,intensive:5}[pace]||4;
+  const totalNeeded = parseInt(days) * stopsPerDay;
 
-  const RESTAURANTS = {
-    budget: [
-      { name: "Bouillon Chartier", type: "Classic French brasserie", stars: 4, price: "€" },
-      { name: "L'As du Fallafel", type: "Falafel & Middle Eastern", stars: 5, price: "€" },
-      { name: "Chez Janou", type: "Provençal bistro", stars: 4, price: "€€" },
-      { name: "Le Petit Cambodge", type: "Cambodian street food", stars: 4, price: "€€" },
-      { name: "Café de Flore", type: "Historic Parisian café", stars: 4, price: "€€" },
-      { name: "Pink Mamma", type: "Italian trattoria", stars: 4, price: "€€" },
-    ],
-    mid: [
-      { name: "Septime", type: "Bistronomie — market-driven", stars: 5, price: "€€€" },
-      { name: "Le Comptoir du Relais", type: "Saint-Germain brasserie", stars: 4, price: "€€€" },
-      { name: "Frenchie", type: "French-American fusion", stars: 5, price: "€€€" },
-      { name: "Bones", type: "Natural wine & small plates", stars: 4, price: "€€€" },
-      { name: "Au Passage", type: "Wine bar & sharing plates", stars: 4, price: "€€€" },
-      { name: "Clown Bar", type: "Neo-bistro with heritage tiles", stars: 5, price: "€€€" },
-    ],
-    luxury: [
-      { name: "Le Grand Véfour", type: "Michelin 2★ — Napoleon's table", stars: 5, price: "€€€€" },
-      { name: "Taillevent", type: "Michelin 1★ — classic haute cuisine", stars: 5, price: "€€€€" },
-      { name: "Kei", type: "Michelin 2★ — French-Japanese fusion", stars: 5, price: "€€€€" },
-      { name: "Le Cinq", type: "Michelin 3★ — Four Seasons", stars: 5, price: "€€€€€" },
-      { name: "L'Ambroisie", type: "Michelin 3★ — Place des Vosges", stars: 5, price: "€€€€€" },
-      { name: "Lasserre", type: "Michelin 1★ — retractable roof", stars: 5, price: "€€€€" },
-    ]
-  };
+  const stopPool = [];
+  const usedNames = new Set();
+  let round = 0;
+  while (stopPool.length < totalNeeded + 4) {
+    let added = 0;
+    for (let i = 0; i < pools.length; i++) {
+      const s = pools[i][round];
+      if (s && !usedNames.has(s.name) && !savedNames.has(s.name) && !currentShown.has(s.name)) {
+        stopPool.push(s); usedNames.add(s.name); added++;
+      }
+    }
+    round++;
+    if (added === 0) break;
+  }
 
-  const TIPS = {
-    art: ["Book Musée d'Orsay tickets online — queues can be 2 hours long", "Visit galleries on Thursday evenings — many open late and free", "The Pompidou rooftop terrace has the best 360° city view — free with ticket"],
-    food: ["Markets close by 1pm — arrive before 11am for the best selection", "Ask for 'formule déjeuner' at any bistro for a 3-course lunch under €20", "The best baguettes are marked 'Tradition' — avoid anything labelled 'Classique'"],
-    architecture: ["Golden hour is 7–8am — monuments without crowds and perfect light", "Many buildings open free on the first Sunday of each month", "Look up — Paris's most beautiful details are above street level"],
-    shopping: ["Most boutiques open at 11am — plan coffee and pastries first", "The Marché aux Puces is closed Monday — plan for Saturday or Sunday", "Bring a fold-up tote bag — plastic bags are banned in French shops"],
-    fashion: ["Le Marais shops stay open on Sundays — unique in Paris", "Vintage stores in Pigalle offer the best price-to-quality ratio", "Many designer boutiques offer tax refunds (détaxe) for non-EU visitors"],
-    parks: ["Bring a picnic — eating on park lawns is encouraged", "Jardin du Luxembourg rents metal chairs — grab one by the fountain", "The Promenade Plantée is quiet on weekday mornings — best time to visit"],
-    history: ["Book Versailles skip-the-line tickets 2 weeks in advance", "The Louvre is less crowded on Wednesday and Friday evenings", "A Paris Museum Pass pays for itself in 2 days if you love history"],
-    nightlife: ["Paris nightlife starts late — dinner at 8pm, bars from 10pm", "Most cocktail bars don't require reservations — just arrive before 9pm", "The last Métro runs around 1:15am — plan your night accordingly"],
-    cinema: ["Cinémathèque screenings are in original language (VO) with subtitles", "Shakespeare & Company has a free upstairs reading room — hidden gem", "La Pagode requires booking ahead — only 60 seats in the main hall"],
-  };
-
-  const TAGLINES = {
-    art: "Where every wall tells a story and every gallery holds a revelation",
-    food: "A culinary journey through the world's greatest food city",
-    architecture: "Reading Paris through its stones, steel, and stained glass",
-    shopping: "The ultimate retail pilgrimage — from flea markets to flagships",
-    fashion: "Dressing in the city that invented style",
-    parks: "Paris at its most serene — gardens, rivers, and breathing space",
-    history: "Walking through twenty centuries of history in the City of Light",
-    nightlife: "Paris after dark — cocktails, jazz, and the city that never really sleeps",
-    cinema: "Paris through the lens — culture, film, and literary adventure",
-  };
-
-  try {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    clearInterval(msgInterval);
-
-    const primaryInterest = interests[0];
-
-    // Collect names already selected by user (from previous generations)
-    const alreadySelected = new Set(
-      [...document.querySelectorAll('.stop-checkbox:checked')].map(cb => cb.dataset.name)
-    );
-    // Also collect ALL names ever shown (selected or not) to avoid repeating them
-    const alreadyShown = new Set(
-      [...document.querySelectorAll('.stop-checkbox')].map(cb => cb.dataset.name)
-    );
-
-    // STRICT: build pool ONLY from selected interests, round-robin between categories
-    // so all selected interests are represented equally
-    const pools = interests.map(i => (STOPS[i] || []).slice()); // one array per interest
-    const stopsPerDay = { relaxed: 3, balanced: 4, intensive: 5 }[pace] || 4;
-    const totalNeeded = parseInt(days) * stopsPerDay;
-
-    // Round-robin fill: skip already shown stops entirely
-    const stopPool = [];
-    const usedNames = new Set();
-    let round = 0;
+  // If pool is empty (all stops exhausted), allow repeats excluding only saved ones
+  if (stopPool.length === 0) {
+    round = 0;
     while (stopPool.length < totalNeeded + 4) {
       let added = 0;
       for (let i = 0; i < pools.length; i++) {
-        const idx = round;
-        if (pools[i][idx] && !usedNames.has(pools[i][idx].name) && !alreadyShown.has(pools[i][idx].name)) {
-          stopPool.push(pools[i][idx]);
-          usedNames.add(pools[i][idx].name);
-          added++;
+        const s = pools[i][round];
+        if (s && !usedNames.has(s.name) && !savedNames.has(s.name)) {
+          stopPool.push(s); usedNames.add(s.name); added++;
         }
       }
       round++;
-      if (added === 0) break; // no more fresh stops available
+      if (added === 0) break;
     }
-
-    const times = ["9:00 AM", "10:30 AM", "12:00 PM", "2:30 PM", "4:30 PM", "6:30 PM"];
-    const dayTitleSets = {
-      nightlife: ["Cocktails & Late Nights", "Bars, Jazz & the Night", "After Dark Adventures"],
-      food:      ["Morning Markets & Patisseries", "Food Trails & Hidden Bistros", "Gourmet Evening"],
-      fashion:   ["Boutiques & Style Hunting", "The Fashion District Trail", "Concept Stores & Vintage"],
-      shopping:  ["Markets & Concept Stores", "Flagship & Flea Markets", "The Grand Shopping Loop"],
-      art:       ["Galleries & Street Art", "Masterpieces & Hidden Gems", "Contemporary Art Trail"],
-      architecture: ["Icons & Hidden Façades", "Bridges, Domes & Arcades", "The Architecture Walk"],
-      parks:     ["Gardens & Riverside Walks", "Parks & Panoramas", "Green Paris"],
-      history:   ["Cathedrals & Palaces", "Revolution & Royalty", "Through the Centuries"],
-      cinema:    ["Film, Books & Culture", "Arthouse & Archives", "The Cultural Trail"],
-    };
-    const titleSet = dayTitleSets[primaryInterest] || ["Day One", "Day Two", "Day Three", "Day Four", "Day Five"];
-
-    const restaurants = RESTAURANTS[budget] || RESTAURANTS.mid;
-    const daysArr = [];
-    let stopIdx = 0;
-
-    for (let d = 1; d <= parseInt(days); d++) {
-      const dayStops = stopPool.slice(stopIdx, stopIdx + stopsPerDay).map((stop, si) => ({
-        ...stop, time: times[si] || times[times.length - 1]
-      }));
-      stopIdx += stopsPerDay;
-      const r1 = restaurants[(d * 2 - 2) % restaurants.length];
-      const r2 = restaurants[(d * 2 - 1) % restaurants.length];
-      daysArr.push({
-        day: d,
-        title: titleSet[(d - 1) % titleSet.length],
-        stops: dayStops,
-        restaurants: [r1, r2]
-      });
-    }
-
-    let allTips = [];
-    interests.forEach(i => { if (TIPS[i]) allTips.push(...TIPS[i]); });
-    const finalTips = [...new Set(allTips)].slice(0, 3);
-    const tagline = TAGLINES[primaryInterest] || "Your perfectly curated Paris experience awaits";
-
-    const itinerary = { tagline, days: daysArr, tips: finalTips };
-    window._lastItinerary = itinerary;
-
-    // Populate result
-    document.getElementById('res-days').textContent = days;
-    document.getElementById('res-pace').textContent = paceLabel;
-    document.getElementById('res-budget').textContent = budgetLabel;
-    document.getElementById('res-group').textContent = groupLabel;
-    document.getElementById('itinerary-tagline').textContent = itinerary.tagline || 'Your curated Paris experience';
-
-    const container = document.getElementById('days-container');
-    container.innerHTML = '';
-
-    const typeEmoji = { sight: '🏛️', food: '🍽️', transport: '🚇', shop: '🛍️', park: '🌿' };
-    const typeClass = { sight: 'icon-sight', food: 'icon-food', transport: 'icon-transport', shop: 'icon-shop', park: 'icon-park' };
-
-    itinerary.days.forEach((day, idx) => {
-      const section = document.createElement('div');
-      section.className = 'day-section';
-
-      let stopsHTML = day.stops.map(stop => {
-        const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(stop.name + ' Paris')}`;
-        const stopId = `stop-${stop.name.replace(/[^a-zA-Z0-9]/g,'_')}`;
-        return `
-        <div class="stop-item" id="item-${stopId}">
-          <div class="stop-time-col">
-            <div class="stop-icon ${typeClass[stop.type] || 'icon-sight'}">${typeEmoji[stop.type] || '📍'}</div>
-            <div class="stop-time">${stop.time}</div>
-          </div>
-          <div class="stop-content">
-            <div class="stop-name-row">
-              <label class="stop-checkbox-wrap">
-                <input type="checkbox" class="stop-checkbox" checked
-                  data-name="${stop.name}"
-                  data-day="${day.day}"
-                  data-daytitle="${day.title}"
-                  data-time="${stop.time}"
-                  data-type="${stop.type}"
-                  data-desc="${stop.description}"
-                  data-google="${googleUrl}"
-                  onchange="updateSelectionCount()">
-                <span class="stop-checkmark"></span>
-              </label>
-              <a class="stop-name" href="${googleUrl}" target="_blank" rel="noopener">${stop.name} <span class="ext-icon">↗</span></a>
-            </div>
-            <div class="stop-desc">${stop.description}</div>
-            <div class="stop-tags">
-              ${(stop.tags || []).map(t => `<span class="stop-tag ${stop.highlight ? 'highlight' : ''}">${t}</span>`).join('')}
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-
-      let restaurantsHTML = '';
-      if (day.restaurants && day.restaurants.length > 0) {
-        const stars = (n) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n));
-        restaurantsHTML = `
-          <div class="restaurant-section">
-            <div class="rest-label">Recommended nearby</div>
-            <div class="restaurant-grid">
-              ${day.restaurants.map(r => {
-                const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(r.name + ' Paris restaurant')}`;
-                return `
-                <div class="restaurant-card">
-                  <a class="restaurant-name" href="${googleUrl}" target="_blank" rel="noopener">${r.name} <span class="ext-icon">↗</span></a>
-                  <div class="restaurant-type">${r.type}</div>
-                  <div class="restaurant-stars">${stars(r.stars || 4)}</div>
-                  <div class="restaurant-price">${r.price}</div>
-                </div>`;
-              }).join('')}
-            </div>
-          </div>`;
-      }
-
-      // Tips only on last day
-      let tipsHTML = '';
-      if (idx === itinerary.days.length - 1 && itinerary.tips) {
-        tipsHTML = `
-          <div class="tips-box">
-            <div class="tips-title">Local insider tips</div>
-            <ul class="tips-list">
-              ${itinerary.tips.map(t => `<li>${t}</li>`).join('')}
-            </ul>
-          </div>`;
-      }
-
-      section.innerHTML = `
-        <div class="day-header ${idx === 0 ? 'open' : ''}" onclick="toggleDay(this)">
-          <div class="day-number">${day.day}</div>
-          <div class="day-title-text">${day.title}</div>
-          <div class="day-toggle">▾</div>
-        </div>
-        <div class="day-body ${idx === 0 ? 'open' : ''}">
-          ${stopsHTML}
-          ${restaurantsHTML}
-          ${tipsHTML}
-        </div>
-      `;
-      container.appendChild(section);
-    });
-
-    // Generate Google Maps link with first day stops
-    if (itinerary.days[0] && itinerary.days[0].stops) {
-      const places = itinerary.days[0].stops.map(s => encodeURIComponent(s.name + ' Paris')).join('/');
-      document.getElementById('maps-link').href = `https://www.google.com/maps/dir/${places}`;
-    }
-
-    loading.classList.remove('visible');
-    const result = document.getElementById('itinerary-result');
-    result.style.display = 'block';
-    result.classList.add('visible');
-    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // New stops start unchecked by default — user picks what to add
-    // But first uncheck all (they're checked by default in the template)
-    document.querySelectorAll('.stop-checkbox').forEach(cb => {
-      cb.checked = false;
-      const item = cb.closest('.stop-item');
-      if (item) item.classList.add('deselected');
-    });
-    updateSelectionCount();
-
-    // Show a notice if user has existing selections
-    const savedCount = (window._savedSelections || []).length;
-    if (savedCount > 0) {
-      const bar = document.getElementById('selection-bar');
-      const notice = document.getElementById('regen-notice');
-      if (!notice) {
-        const n = document.createElement('div');
-        n.id = 'regen-notice';
-        n.style.cssText = 'padding:0.6rem 2rem;background:rgba(184,134,11,0.1);font-size:12px;color:var(--ink-mid);border-top:1px solid var(--gold-pale);';
-        n.innerHTML = `✦ You already have <strong>${savedCount}</strong> location${savedCount > 1 ? 's' : ''} saved from your previous selection. Tick the new ones you want to add, then click <em>Review my selection</em>.`;
-        bar.parentNode.insertBefore(n, bar.nextSibling);
-      }
-    }
-    window._savedSelections = window._savedSelections || [];
-
-  } catch (err) {
-    clearInterval(msgInterval);
-    loading.classList.remove('visible');
-    const errBox = document.getElementById('error-box');
-    errBox.textContent = 'Error: ' + err.message;
-    errBox.classList.add('visible');
-    console.error(err);
   }
 
+  // Track what's shown in current suggestion batch
+  state.currentShown = stopPool.map(s => s.name);
+
+  const times = ["9:00 AM","10:30 AM","12:00 PM","2:30 PM","4:30 PM","6:30 PM"];
+  const titleSets = {
+    nightlife:["Cocktails & Late Nights","Bars, Jazz & the Night","After Dark Adventures"],
+    food:["Morning Markets & Patisseries","Food Trails & Hidden Bistros","Gourmet Evening"],
+    fashion:["Boutiques & Style Hunting","The Fashion District Trail","Concept Stores & Vintage"],
+    shopping:["Markets & Concept Stores","Flagship & Flea Markets","The Grand Shopping Loop"],
+    art:["Galleries & Street Art","Masterpieces & Hidden Gems","Contemporary Art Trail"],
+    architecture:["Icons & Hidden Façades","Bridges, Domes & Arcades","The Architecture Walk"],
+    parks:["Gardens & Riverside Walks","Parks & Panoramas","Green Paris"],
+    history:["Cathedrals & Palaces","Revolution & Royalty","Through the Centuries"],
+    cinema:["Film, Books & Culture","Arthouse & Archives","The Cultural Trail"],
+  };
+  const titleSet = titleSets[interests[0]] || ["Day One","Day Two","Day Three","Day Four","Day Five"];
+  const rests = RESTAURANTS[budget] || RESTAURANTS.mid;
+  const daysArr = [];
+  let si = 0;
+  for (let d = 1; d <= parseInt(days); d++) {
+    const dayStops = stopPool.slice(si, si+stopsPerDay).map((s,i) => ({...s, time:times[i]||times[times.length-1]}));
+    si += stopsPerDay;
+    daysArr.push({
+      day: d,
+      title: titleSet[(d-1) % titleSet.length],
+      stops: dayStops,
+      restaurants: [rests[(d*2-2)%rests.length], rests[(d*2-1)%rests.length]]
+    });
+  }
+
+  let allTips = [];
+  interests.forEach(i => { if(TIPS[i]) allTips.push(...TIPS[i]); });
+  const itinerary = {
+    tagline: TAGLINES[interests[0]] || "Your perfectly curated Paris experience",
+    days: daysArr,
+    tips: [...new Set(allTips)].slice(0,3)
+  };
+
+  state.lastItinerary = itinerary;
+  saveState();
+
+  loading.classList.remove('visible');
   btn.disabled = false;
+
+  // Reset new selections for this generation
+  state.newSelections = [];
+  renderItinerary(itinerary);
+
+  // Scroll down to results
+  document.getElementById('itinerary-result').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
-    const s = document.createElement('script');
-    s.src = src; s.onload = resolve; s.onerror = reject;
-    document.head.appendChild(s);
+function renderItinerary(itinerary) {
+  const typeEmoji = {sight:'🏛️',food:'🍽️',transport:'🚇',shop:'🛍️',park:'🌿'};
+  const typeClass = {sight:'icon-sight',food:'icon-food',transport:'icon-transport',shop:'icon-shop',park:'icon-park'};
+  const savedNames = new Set(state.masterSelection.map(s => s.name));
+
+  const container = document.getElementById('days-container');
+  container.innerHTML = '';
+
+  itinerary.days.forEach((day, idx) => {
+    const section = document.createElement('div');
+    section.className = 'day-section';
+
+    const stopsHTML = day.stops.map(stop => {
+      const gurl = `https://www.google.com/search?q=${encodeURIComponent(stop.name+' Paris')}`;
+      const alreadySaved = savedNames.has(stop.name);
+      return `<div class="stop-item${alreadySaved?' deselected':''}">
+        <div class="stop-time-col">
+          <div class="stop-icon ${typeClass[stop.type]||'icon-sight'}">${typeEmoji[stop.type]||'📍'}</div>
+          <div class="stop-time">${stop.time}</div>
+        </div>
+        <div class="stop-content">
+          <div class="stop-name-row">
+            <label class="stop-checkbox-wrap">
+              <input type="checkbox" class="stop-checkbox" ${alreadySaved?'disabled':''}
+                data-name="${stop.name}" data-day="${day.day}" data-daytitle="${day.title}"
+                data-time="${stop.time}" data-type="${stop.type}"
+                data-desc="${stop.description.replace(/"/g,'&quot;')}"
+                data-google="${gurl}"
+                onchange="toggleStop(this)">
+              <span class="stop-checkmark">${alreadySaved?'<span style="font-size:10px;color:var(--gold)">✓</span>':''}</span>
+            </label>
+            <a class="stop-name" href="${gurl}" target="_blank" rel="noopener">${stop.name}${alreadySaved?' <span style="font-size:10px;color:var(--gold);font-family:var(--font-body);font-weight:400">✓ in trip</span>':''} <span class="ext-icon">↗</span></a>
+          </div>
+          <div class="stop-desc">${stop.description}</div>
+          <div class="stop-tags">${(stop.tags||[]).map(t=>`<span class="stop-tag${stop.highlight?' highlight':''}">${t}</span>`).join('')}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const stars = n => '★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n));
+    const restHTML = day.restaurants?.length ? `
+      <div class="restaurant-section">
+        <div class="rest-label">Recommended nearby</div>
+        <div class="restaurant-grid">
+          ${day.restaurants.map(r => {
+            const gurl = `https://www.google.com/search?q=${encodeURIComponent(r.name+' Paris restaurant')}`;
+            return `<div class="restaurant-card">
+              <a class="restaurant-name" href="${gurl}" target="_blank" rel="noopener">${r.name} <span class="ext-icon">↗</span></a>
+              <div class="restaurant-type">${r.type}</div>
+              <div class="restaurant-stars">${stars(r.stars||4)}</div>
+              <div class="restaurant-price">${r.price}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>` : '';
+
+    const tipsHTML = idx === itinerary.days.length-1 && itinerary.tips?.length ? `
+      <div class="tips-box">
+        <div class="tips-title">Local insider tips</div>
+        <ul class="tips-list">${itinerary.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>` : '';
+
+    section.innerHTML = `
+      <div class="day-header${idx===0?' open':''}" onclick="toggleDay(this)">
+        <div class="day-number">${day.day}</div>
+        <div class="day-title-text">${day.title}</div>
+        <div class="day-toggle">▾</div>
+      </div>
+      <div class="day-body${idx===0?' open':''}">
+        ${stopsHTML}${restHTML}${tipsHTML}
+      </div>`;
+    container.appendChild(section);
+  });
+
+  document.getElementById('itinerary-result').style.display = 'block';
+  state.newSelections = state.newSelections || [];
+  updateNewSelCount();
+}
+
+function toggleStop(cb) {
+  if (!state.newSelections) state.newSelections = [];
+  const data = {
+    name:cb.dataset.name, day:cb.dataset.day, daytitle:cb.dataset.daytitle,
+    time:cb.dataset.time, type:cb.dataset.type, desc:cb.dataset.desc, google:cb.dataset.google
+  };
+  if (cb.checked) {
+    if (!state.newSelections.find(s => s.name === data.name)) state.newSelections.push(data);
+  } else {
+    state.newSelections = state.newSelections.filter(s => s.name !== data.name);
+  }
+  cb.closest('.stop-item').classList.toggle('deselected', !cb.checked);
+  updateNewSelCount();
+}
+
+function updateNewSelCount() {
+  const n = (state.newSelections||[]).length;
+  const el = document.getElementById('new-sel-num');
+  if (el) el.textContent = n;
+  const btn = document.getElementById('add-to-trip-btn');
+  if (btn) btn.disabled = n === 0;
+}
+
+function addToTrip() {
+  const newSels = state.newSelections || [];
+  if (newSels.length === 0) return;
+  const existingNames = new Set(state.masterSelection.map(s => s.name));
+  newSels.forEach(s => { if (!existingNames.has(s.name)) state.masterSelection.push(s); });
+
+  // Redistribute hours per day so no duplicates
+  redistributeHours();
+
+  state.newSelections = [];
+  saveState();
+  updateBadge();
+
+  // Mark added stops visually
+  document.querySelectorAll('.stop-checkbox:checked').forEach(cb => {
+    cb.disabled = true; cb.checked = false;
+    const item = cb.closest('.stop-item');
+    item.classList.add('deselected');
+    const checkmark = item.querySelector('.stop-checkmark');
+    if (checkmark) checkmark.innerHTML = '<span style="font-size:10px;color:var(--gold)">✓</span>';
+    const nameEl = item.querySelector('.stop-name');
+    if (nameEl && !nameEl.innerHTML.includes('in trip')) {
+      nameEl.innerHTML = nameEl.innerHTML.replace('<span class="ext-icon">', '<span style="font-size:10px;color:var(--gold);font-family:var(--font-body);font-weight:400">✓ in trip</span> <span class="ext-icon">');
+    }
+  });
+  updateNewSelCount();
+  const bar = document.getElementById('add-to-trip-bar');
+  if (bar) { bar.style.background='var(--sage)'; setTimeout(()=>bar.style.background='var(--ink)',800); }
+  renderTrip();
+}
+
+// Redistribute times across all days so no two stops share the same hour
+function redistributeHours() {
+  const TIMES = ["8:30 AM","9:30 AM","10:30 AM","11:30 AM","1:00 PM","2:30 PM","4:00 PM","5:30 PM","7:00 PM","8:30 PM"];
+  // Group by day
+  const byDay = {};
+  state.masterSelection.forEach(s => {
+    const d = s.day || '1';
+    if (!byDay[d]) byDay[d] = [];
+    byDay[d].push(s);
+  });
+  // Reassign times sequentially per day
+  Object.keys(byDay).forEach(d => {
+    byDay[d].forEach((s, i) => {
+      s.time = TIMES[i] || `${9 + i}:00 AM`;
+    });
   });
 }
 
-function downloadHTML() {
-  if (!window._lastItinerary) {
-    alert('Generate your itinerary first, then save it as PDF.');
-    return;
-  }
-
-  const it = window._lastItinerary;
-  const typeIcon = { sight: '▲', food: '●', shop: '◆', park: '✿', transport: '→' };
-
-  const daysHTML = it.days.map(day => `
-    <div class="day-block">
-      <div class="day-hdr">
-        <div class="day-num">${day.day}</div>
-        <div class="day-ttl">${day.title}</div>
-      </div>
-      ${day.stops.map(stop => `
-        <div class="stop">
-          <div class="stop-left">
-            <div class="stop-ico ${stop.type}">${typeIcon[stop.type] || '●'}</div>
-            <div class="stop-line"></div>
-            <div class="stop-time">${stop.time}</div>
-          </div>
-          <div class="stop-right">
-            <div class="stop-name">${stop.name}</div>
-            <div class="stop-desc">${stop.description}</div>
-            <div class="stop-tags">${(stop.tags||[]).map(t=>`<span class="tag ${stop.highlight?'hl':''}">${t}</span>`).join('')}</div>
-          </div>
-        </div>
-      `).join('')}
-      ${day.restaurants && day.restaurants.length ? `
-        <div class="rest-section">
-          <div class="rest-label">Recommended Nearby</div>
-          <div class="rest-grid">
-            ${day.restaurants.map(r => `
-              <div class="rest-card">
-                <div class="rest-name">${r.name}</div>
-                <div class="rest-type">${r.type}</div>
-                <div class="rest-stars">${'★'.repeat(Math.round(r.stars||4))}${'☆'.repeat(5-Math.round(r.stars||4))} <span class="rest-price">${r.price||'€€'}</span></div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      ` : ''}
-    </div>
-  `).join('');
-
-  const tipsHTML = it.tips && it.tips.length ? `
-    <div class="tips-block">
-      <div class="tips-lbl">Local Insider Tips</div>
-      ${it.tips.map(t => `<div class="tip">→ ${t}</div>`).join('')}
-    </div>
-  ` : '';
-
-  const metaDays = document.getElementById('res-days').textContent;
-  const metaPace = document.getElementById('res-pace').textContent;
-  const metaBudget = document.getElementById('res-budget').textContent;
-  const metaGroup = document.getElementById('res-group').textContent;
-
-  const html = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Paris City Break Itinerary</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A1612;padding:0;font-size:12px}
-  .hdr{background:#1A1612;color:#F5F0E8;padding:20px 24px 16px}
-  .hdr-meta{display:flex;gap:20px;margin-bottom:10px;flex-wrap:wrap}
-  .hdr-meta span{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.55)}
-  .hdr-meta strong{display:block;font-size:16px;letter-spacing:0;text-transform:none;color:#F5F0E8;font-family:'Cormorant Garamond',serif;font-weight:300}
-  .hdr-tagline{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;font-style:italic;color:#F0DFA0}
-  .gold-line{height:2px;background:#B8860B;margin:0 0 16px}
-  .day-block{background:#fff;border:1px solid #EBE4D6;border-top:none;page-break-inside:avoid}
-  .day-hdr{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#F5F0E8;border-bottom:1px solid #EBE4D6}
-  .day-num{width:28px;height:28px;background:#1A1612;color:#F5F0E8;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;border-radius:50%;flex-shrink:0}
-  .day-ttl{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;font-style:italic}
-  .stop{display:flex;gap:12px;padding:10px 16px 4px;align-items:flex-start}
-  .stop-left{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0}
-  .stop-ico{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-  .stop-ico.sight{background:#EBE4D6;color:#3D3530}
-  .stop-ico.food{background:#FDECEA;color:#8B2635}
-  .stop-ico.shop{background:#EDE8F5;color:#534AB7}
-  .stop-ico.park{background:#E8F0E9;color:#5C7A5F}
-  .stop-ico.transport{background:#E6F1FB;color:#185FA5}
-  .stop-line{width:1px;height:14px;background:#EBE4D6;margin:2px 0}
-  .stop-time{font-size:8px;color:#B8860B;font-weight:500;letter-spacing:.03em;text-align:center}
-  .stop-right{flex:1;padding-top:2px}
-  .stop-name{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;margin-bottom:2px}
-  .stop-desc{font-size:10px;color:#6B5E56;line-height:1.5;margin-bottom:4px}
-  .stop-tags{display:flex;gap:4px;flex-wrap:wrap}
-  .tag{font-size:9px;padding:1px 6px;background:#F5F0E8;border:1px solid #EBE4D6;color:#6B5E56}
-  .tag.hl{background:#F0DFA0;border-color:#B8860B;color:#8B6200}
-  .rest-section{padding:8px 16px 12px;border-top:1px solid #EBE4D6;margin-top:6px}
-  .rest-label{font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#8B2635;margin-bottom:6px}
-  .rest-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .rest-card{padding:7px 10px;background:#F5F0E8;border:1px solid #EBE4D6}
-  .rest-name{font-size:11px;font-weight:500;margin-bottom:1px}
-  .rest-type{font-size:9px;color:#6B5E56;margin-bottom:2px}
-  .rest-stars{font-size:9px;color:#B8860B}
-  .rest-price{color:#5C7A5F;font-weight:500}
-  .tips-block{margin-top:12px;padding:12px 16px;border-left:3px solid #B8860B;background:rgba(240,223,160,.15);page-break-inside:avoid}
-  .tips-lbl{font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#B8860B;margin-bottom:8px}
-  .tip{font-size:10px;color:#3D3530;line-height:1.6;margin-bottom:4px}
-  .footer{margin-top:16px;padding:8px 16px;border-top:1px solid #EBE4D6;font-size:8px;color:#B8860B;font-family:'Cormorant Garamond',serif;font-style:italic;display:flex;justify-content:space-between}
-  .print-btn{position:fixed;top:16px;right:16px;background:#1A1612;color:#F5F0E8;border:none;padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;z-index:999}
-  .print-btn:hover{background:#8B2635}
-  @media print{.print-btn{display:none!important} body{background:#fff} .day-block{page-break-inside:avoid}}
-</style>
-</head>
-<body>
-<button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
-<div class="hdr">
-  <div class="hdr-meta">
-    <span><strong>${metaDays}</strong>Days</span>
-    <span><strong>${metaPace}</strong>Pace</span>
-    <span><strong>${metaBudget}</strong>Budget</span>
-    <span><strong>${metaGroup}</strong>Group</span>
-  </div>
-  <div class="hdr-tagline">${it.tagline || 'Your Paris Itinerary'}</div>
-</div>
-<div class="gold-line"></div>
-${daysHTML}
-${tipsHTML}
-<div class="footer">
-  <span>Paris City Break Planner — AI Generated</span>
-  <span>parisplanner.app</span>
-</div>
-</body>
-</html>`;
-
-  const win = window.open('', '_blank', 'width=800,height=900');
-  if (!win) {
-    alert('Pop-up blocat de browser. Permite pop-up-uri pentru acest site și încearcă din nou.');
-    return;
-  }
-  win.document.write(html);
-  win.document.close();
+function clearSuggestions() {
+  if (!confirm('Delete all suggested locations?')) return;
+  state.lastItinerary = null;
+  state.newSelections = [];
+  state.currentShown = [];
+  saveState();
+  document.getElementById('itinerary-result').style.display = 'none';
+  document.getElementById('days-container').innerHTML = '';
+  updateNewSelCount();
 }
+
+function renderTrip() {
+  const master = state.masterSelection;
+  if (!master.length) {
+    document.getElementById('empty-trip').style.display = 'block';
+    document.getElementById('saved-trip').style.display = 'none';
+    return;
+  }
+  document.getElementById('empty-trip').style.display = 'none';
+  document.getElementById('saved-trip').style.display = 'block';
+
+  const typeEmoji = {sight:'🏛️',food:'🍽️',transport:'🚇',shop:'🛍️',park:'🌿'};
+  const byDay = {};
+  master.forEach(s => {
+    const d = s.day||'1';
+    if (!byDay[d]) byDay[d] = {title:s.daytitle||`Day ${d}`,stops:[]};
+    byDay[d].stops.push(s);
+  });
+
+  document.getElementById('trip-count').textContent = master.length;
+  document.getElementById('trip-days-count').textContent = Object.keys(byDay).length;
+  const mapsUrl = `https://www.google.com/maps/dir/${master.map(s=>encodeURIComponent(s.name+' Paris')).join('/')}`;
+  document.getElementById('maps-link').href = mapsUrl;
+
+  const container = document.getElementById('trip-days-container');
+  container.innerHTML = '';
+
+  Object.keys(byDay).sort((a,b)=>parseInt(a)-parseInt(b)).forEach(d => {
+    const g = byDay[d];
+    const section = document.createElement('div');
+    section.className = 'day-section';
+    const stopsHTML = g.stops.map(s => {
+      const mapUrl = `https://www.google.com/maps/search/${encodeURIComponent(s.name+' Paris')}`;
+      const isVisited = (state.visited || []).includes(s.name);
+      const safeId = s.name.replace(/[^a-zA-Z0-9]/g,'_');
+      return `<div class="stop-item${isVisited?' visited':''}" id="trip-stop-${safeId}">
+        <div class="stop-time-col">
+          <div class="stop-icon ${{'sight':'icon-sight','food':'icon-food','shop':'icon-shop','park':'icon-park','transport':'icon-transport'}[s.type]||'icon-sight'}">${typeEmoji[s.type]||'📍'}</div>
+          <div class="stop-time">${s.time||''}</div>
+        </div>
+        <div class="stop-content">
+          <div class="stop-name-row">
+            <label class="visited-wrap" title="Mark as visited">
+              <input type="checkbox" ${isVisited?'checked':''} onchange="toggleVisited('${s.name.replace(/'/g,"\\'")}',this)">
+              <span class="visited-box"></span>
+            </label>
+            <a class="stop-name" href="${s.google}" target="_blank" rel="noopener">${s.name} <span class="ext-icon">↗</span></a>
+            <a href="${mapUrl}" target="_blank" style="margin-left:auto;font-size:10px;color:var(--gold);text-decoration:none;padding:2px 7px;border:1px solid var(--gold);flex-shrink:0">📍</a>
+            <button class="trip-remove-btn" onclick="removeFromTrip('${s.name.replace(/'/g,"\\'")}')">✕</button>
+          </div>
+          <div class="stop-desc">${s.desc}</div>
+        </div>
+      </div>`;
+    }).join('');
+    section.innerHTML = `
+      <div class="day-header open" onclick="toggleDay(this)">
+        <div class="day-number">${d}</div>
+        <div class="day-title-text">${g.title}</div>
+        <div class="day-toggle">▾</div>
+      </div>
+      <div class="day-body open">
+        ${stopsHTML}
+        <div class="add-location-form" id="add-form-day-${d}">
+          <div class="add-loc-autocomplete">
+            <div class="add-loc-search-row">
+              <div class="add-loc-search-wrap">
+                <input class="add-loc-input" type="text"
+                  placeholder="Search or type a location..."
+                  id="add-input-day-${d}"
+                  autocomplete="off"
+                  oninput="onAddInput('${d}')"
+                  onkeydown="onAddKeydown(event,'${d}')">
+                <div class="add-loc-dropdown" id="add-dropdown-day-${d}"></div>
+              </div>
+              <select class="add-loc-select" id="add-type-day-${d}">
+                <option value="sight">🏛 Sight</option>
+                <option value="food">🍽 Food</option>
+                <option value="shop">🛍 Shop</option>
+                <option value="park">🌿 Park</option>
+              </select>
+              <button class="add-loc-confirm" onclick="confirmAddLocation('${d}')">✦ Add</button>
+              <button class="add-loc-cancel" onclick="cancelAddLocation('${d}')">✕</button>
+            </div>
+            <div class="add-loc-hint" id="add-hint-day-${d}">Type to search from 60+ Paris locations, or enter any name</div>
+          </div>
+        </div>
+        <button class="add-location-btn" id="add-btn-day-${d}" onclick="showAddForm('${d}')">+ Add a location to Day ${d}</button>
+      </div>`;
+    container.appendChild(section);
+  });
+
+  const tips = state.lastItinerary?.tips || [];
+  if (tips.length) {
+    const tipDiv = document.createElement('div');
+    tipDiv.className = 'tips-box'; tipDiv.style.margin = '0 0 1rem';
+    tipDiv.innerHTML = `<div class="tips-title">Local insider tips</div><ul class="tips-list">${tips.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+    container.appendChild(tipDiv);
+  }
+
+  updateVisitedProgress();
+}
+
+function showAddForm(day) {
+  document.getElementById('add-form-day-' + day).classList.add('open');
+  document.getElementById('add-btn-day-' + day).style.display = 'none';
+  setTimeout(() => document.getElementById('add-input-day-' + day).focus(), 50);
+}
+
+function cancelAddLocation(day) {
+  document.getElementById('add-form-day-' + day).classList.remove('open');
+  document.getElementById('add-btn-day-' + day).style.display = '';
+  document.getElementById('add-input-day-' + day).value = '';
+  closeDropdown(day);
+  delete window._addSelected;
+}
+
+// Build flat list of all stops from STOPS data
+function getAllStops() {
+  const all = [];
+  const catLabel = {art:'Art',food:'Food',architecture:'Architecture',shopping:'Shopping',fashion:'Fashion',parks:'Parks',history:'History',nightlife:'Nightlife',cinema:'Cinema'};
+  const typeEmoji = {sight:'🏛️',food:'🍽️',shop:'🛍️',park:'🌿',transport:'🚇'};
+  Object.keys(STOPS).forEach(cat => {
+    STOPS[cat].forEach(s => {
+      all.push({
+        name: s.name,
+        type: s.type,
+        category: catLabel[cat] || cat,
+        desc: s.description,
+        emoji: typeEmoji[s.type] || '📍',
+        google: `https://www.google.com/search?q=${encodeURIComponent(s.name+' Paris')}`
+      });
+    });
+  });
+  return all;
+}
+
+let _focusedIdx = -1;
+
+function onAddInput(day) {
+  const input = document.getElementById('add-input-day-' + day);
+  const dropdown = document.getElementById('add-dropdown-day-' + day);
+  const hint = document.getElementById('add-hint-day-' + day);
+  const q = input.value.trim().toLowerCase();
+  delete window._addSelected;
+  _focusedIdx = -1;
+
+  if (q.length < 1) { closeDropdown(day); return; }
+
+  // Already in trip?
+  const inTrip = new Set(state.masterSelection.map(s => s.name.toLowerCase()));
+
+  const results = getAllStops()
+    .filter(s => s.name.toLowerCase().includes(q) && !inTrip.has(s.name.toLowerCase()))
+    .slice(0, 8);
+
+  if (results.length === 0) {
+    dropdown.innerHTML = `<div class="add-loc-manual-row">➕ Add "<strong>${input.value}</strong>" manually</div>`;
+    dropdown.classList.add('open');
+    hint.textContent = 'No matches — will be added as a custom location';
+    return;
+  }
+
+  dropdown.innerHTML = results.map((s, i) => `
+    <div class="add-loc-option" data-idx="${i}" onmousedown="selectSuggestion('${day}',${i})">
+      <span class="add-loc-option-icon">${s.emoji}</span>
+      <div class="add-loc-option-info">
+        <div class="add-loc-option-name">${highlight(s.name, q)}</div>
+        <div class="add-loc-option-cat">${s.category} · ${s.desc.slice(0,50)}…</div>
+      </div>
+      ${s.type === 'sight' ? '<span class="add-loc-option-badge">📍 Maps</span>' : ''}
+    </div>
+  `).join('') + `<div class="add-loc-manual-row" onmousedown="selectManual('${day}')">➕ Add "${input.value}" as custom location</div>`;
+
+  // Store results for keyboard nav
+  window._addResults = { [day]: results };
+  dropdown.classList.add('open');
+  hint.textContent = results.length + ' suggestions from our database';
+}
+
+function highlight(text, q) {
+  const idx = text.toLowerCase().indexOf(q);
+  if (idx === -1) return text;
+  return text.slice(0,idx) + '<strong>' + text.slice(idx, idx+q.length) + '</strong>' + text.slice(idx+q.length);
+}
+
+function onAddKeydown(e, day) {
+  const dropdown = document.getElementById('add-dropdown-day-' + day);
+  const options = dropdown.querySelectorAll('.add-loc-option');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _focusedIdx = Math.min(_focusedIdx + 1, options.length - 1);
+    options.forEach((o,i) => o.classList.toggle('focused', i === _focusedIdx));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _focusedIdx = Math.max(_focusedIdx - 1, 0);
+    options.forEach((o,i) => o.classList.toggle('focused', i === _focusedIdx));
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (_focusedIdx >= 0 && options[_focusedIdx]) {
+      selectSuggestion(day, _focusedIdx);
+    } else {
+      confirmAddLocation(day);
+    }
+  } else if (e.key === 'Escape') {
+    cancelAddLocation(day);
+  }
+}
+
+function selectSuggestion(day, idx) {
+  const results = (window._addResults || {})[day];
+  if (!results || !results[idx]) return;
+  const s = results[idx];
+  const input = document.getElementById('add-input-day-' + day);
+  const typeEl = document.getElementById('add-type-day-' + day);
+  input.value = s.name;
+  typeEl.value = s.type;
+  window._addSelected = s;
+  closeDropdown(day);
+  document.getElementById('add-hint-day-' + day).textContent = '✓ Selected from database — Google Maps pin included';
+}
+
+function selectManual(day) {
+  closeDropdown(day);
+  document.getElementById('add-hint-day-' + day).textContent = 'Will be added as a custom location';
+}
+
+function closeDropdown(day) {
+  const dd = document.getElementById('add-dropdown-day-' + day);
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  _focusedIdx = -1;
+}
+
+function confirmAddLocation(day) {
+  const input = document.getElementById('add-input-day-' + day);
+  const typeEl = document.getElementById('add-type-day-' + day);
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+
+  const TIMES = ["8:30 AM","9:30 AM","10:30 AM","11:30 AM","1:00 PM","2:30 PM","4:00 PM","5:30 PM","7:00 PM","8:30 PM"];
+  const dayStops = state.masterSelection.filter(s => s.day === String(day));
+  const nextTime = TIMES[dayStops.length] || (dayStops.length + 8) + ':00 AM';
+  const daytitle = dayStops.length > 0 ? dayStops[0].daytitle : ('Day ' + day);
+
+  let newStop;
+  if (window._addSelected && window._addSelected.name === name) {
+    // Use full data from database
+    const s = window._addSelected;
+    newStop = {
+      name: s.name, day: String(day), daytitle,
+      time: nextTime, type: s.type,
+      desc: s.desc,
+      google: s.google,
+      manual: false
+    };
+  } else {
+    // Custom manual entry
+    newStop = {
+      name, day: String(day), daytitle,
+      time: nextTime, type: typeEl.value,
+      desc: 'Custom location',
+      google: `https://www.google.com/search?q=${encodeURIComponent(name + ' Paris')}`,
+      manual: true
+    };
+  }
+
+  state.masterSelection.push(newStop);
+  redistributeHours();
+  saveState();
+  updateBadge();
+  delete window._addSelected;
+  renderTrip();
+}
+
+function toggleVisited(name, cb) {
+  if (!state.visited) state.visited = [];
+  if (cb.checked) {
+    if (!state.visited.includes(name)) state.visited.push(name);
+  } else {
+    state.visited = state.visited.filter(n => n !== name);
+  }
+  // Toggle visual class on stop item
+  const safeId = name.replace(/[^a-zA-Z0-9]/g,'_');
+  const item = document.getElementById('trip-stop-' + safeId);
+  if (item) item.classList.toggle('visited', cb.checked);
+  saveState();
+  updateVisitedProgress();
+}
+
+function updateVisitedProgress() {
+  const total = state.masterSelection.length;
+  const visited = (state.visited || []).filter(n => state.masterSelection.find(s => s.name === n)).length;
+  const pct = total > 0 ? Math.round((visited / total) * 100) : 0;
+  const fill = document.getElementById('visited-fill');
+  const text = document.getElementById('visited-text');
+  if (fill) fill.style.width = pct + '%';
+  if (text) text.textContent = visited + ' / ' + total + ' visited';
+}
+
+function removeFromTrip(name) {
+  state.masterSelection = state.masterSelection.filter(s => s.name !== name);
+  state.visited = (state.visited || []).filter(n => n !== name);
+  saveState(); updateBadge(); renderTrip();
+  document.querySelectorAll('.stop-checkbox').forEach(cb => {
+    if (cb.dataset.name === name) {
+      cb.disabled = false; cb.checked = false;
+      cb.closest('.stop-item').classList.remove('deselected');
+      const ck = cb.closest('.stop-item').querySelector('.stop-checkmark');
+      if (ck) ck.innerHTML = '';
+    }
+  });
+}
+
+function toggleDay(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+
+function clearTrip() {
+  if (!confirm('Clear all locations from your trip?')) return;
+  state.masterSelection = [];
+  state.currentShown = [];
+  state.lastItinerary = null;
+  state.newSelections = [];
+  state.visited = [];
+  saveState();
+  updateBadge();
+  renderTrip();
+  document.getElementById('itinerary-result').style.display = 'none';
+}
+
+function updateBadge() {
+  const n = state.masterSelection.length;
+  const badge = document.getElementById('trip-badge');
+  badge.textContent = n;
+  badge.classList.toggle('visible', n > 0);
+}
+
+function openReview() {}
+function closeReview() { document.getElementById('review-overlay').classList.remove('open'); }
+function buildTrip() { renderTrip(); goTo('trip'); closeReview(); }
+function regenerate() { goTo('planner'); }
+
+async function downloadTripPDF() {
+  const master = state.masterSelection;
+  if (!master.length) { alert('No locations in your trip yet.'); return; }
+
+  const btn = document.querySelector('#saved-trip .action-btn.primary');
+  if (btn) { btn.textContent = 'Generating...'; btn.disabled = true; }
+
+  try {
+    await new Promise((resolve, reject) => {
+      if (window.jspdf) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const PW = 210, PH = 297, ML = 14, MR = 14, MT = 14;
+    const TW = PW - ML - MR;
+    let y = MT;
+    const CREAM = [245,240,232], INK = [26,22,18], GOLD = [184,134,11], LGRAY = [235,228,214];
+
+    const checkY = (need) => { if (y + need > PH - 16) { doc.addPage(); y = MT; } };
+
+    // HEADER
+    doc.setFillColor(...INK); doc.rect(0, 0, PW, 36, 'F');
+    doc.setFontSize(20); doc.setTextColor(...CREAM); doc.setFont('helvetica','bolditalic');
+    doc.text('My Paris Trip', ML, 16);
+    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(180,170,155);
+    doc.text(master.length + ' LOCATIONS  .  PARIS CITY BREAK PLANNER', ML, 26);
+    doc.setDrawColor(...GOLD); doc.setLineWidth(0.6); doc.line(0, 36, PW, 36);
+    y = 44;
+
+    // MAPS LINK
+    const mapsUrl = 'https://www.google.com/maps/dir/' + master.map(s=>encodeURIComponent(s.name+' Paris')).join('/');
+    checkY(10);
+    doc.setFillColor(...CREAM); doc.rect(ML, y, TW, 8, 'F');
+    doc.setFontSize(8); doc.setTextColor(...INK); doc.setFont('helvetica','normal');
+    doc.text('Full route > Open in Google Maps', ML+3, y+5.5);
+    doc.link(ML, y, TW, 8, { url: mapsUrl });
+    y += 12;
+
+    // GROUP BY DAY
+    const byDay = {};
+    master.forEach(s => {
+      const d = s.day||'1';
+      if (!byDay[d]) byDay[d] = { title: s.daytitle||('Day '+d), stops: [] };
+      byDay[d].stops.push(s);
+    });
+
+    const typeColors = { sight:[235,228,214], food:[253,236,234], shop:[237,232,245], park:[232,240,233], transport:[230,241,251] };
+    const typeSymbol = { sight:'S', food:'F', shop:'$', park:'P', transport:'T' };
+
+    Object.keys(byDay).sort((a,b)=>parseInt(a)-parseInt(b)).forEach(d => {
+      const g = byDay[d];
+      checkY(14);
+      doc.setFillColor(...CREAM); doc.rect(ML, y, TW, 10, 'F');
+      doc.setDrawColor(...LGRAY); doc.setLineWidth(0.3); doc.rect(ML, y, TW, 10, 'S');
+      doc.setFillColor(...INK); doc.circle(ML+6, y+5, 4.2, 'F');
+      doc.setFontSize(8); doc.setTextColor(...CREAM); doc.setFont('helvetica','bold');
+      doc.text(String(d), ML+6, y+6.2, {align:'center'});
+      doc.setFontSize(11); doc.setTextColor(...INK); doc.setFont('helvetica','bolditalic');
+      doc.text(g.title, ML+14, y+6.5);
+      y += 13;
+
+      g.stops.forEach(stop => {
+        checkY(18);
+        const ic = typeColors[stop.type] || typeColors.sight;
+        doc.setFillColor(...ic); doc.circle(ML+5, y+5, 4, 'F');
+        doc.setFontSize(7); doc.setTextColor(60,50,45); doc.setFont('helvetica','bold');
+        doc.text(typeSymbol[stop.type]||'o', ML+5, y+6, {align:'center'});
+        doc.setFontSize(7); doc.setTextColor(...GOLD); doc.setFont('helvetica','normal');
+        doc.text(stop.time||'', ML+5, y+12, {align:'center'});
+        doc.setFontSize(10); doc.setTextColor(...INK); doc.setFont('helvetica','bold');
+        doc.text(stop.name, ML+13, y+5.5);
+        doc.setFontSize(8); doc.setTextColor(100,88,80); doc.setFont('helvetica','normal');
+        const descLines = doc.splitTextToSize(stop.desc||'', TW-14);
+        descLines.forEach((line, li) => doc.text(line, ML+13, y+10+li*4));
+        y += 10 + descLines.length*4 + 5;
+        checkY(2);
+      });
+      y += 3;
+    });
+
+    // TIPS
+    const tips = (state.lastItinerary && state.lastItinerary.tips) ? state.lastItinerary.tips : [];
+    if (tips.length) {
+      checkY(14 + tips.length * 9);
+      doc.setDrawColor(...GOLD); doc.setLineWidth(1);
+      doc.line(ML, y, ML, y + 8 + tips.length*9); doc.setLineWidth(0.3);
+      doc.setFontSize(7); doc.setTextColor(...GOLD); doc.setFont('helvetica','bold');
+      doc.text('LOCAL INSIDER TIPS', ML+4, y+4);
+      y += 8;
+      tips.forEach(tip => {
+        checkY(9);
+        doc.setFontSize(8.5); doc.setTextColor(...INK); doc.setFont('helvetica','normal');
+        doc.text('->', ML+4, y+3);
+        const tLines = doc.splitTextToSize(tip, TW-12);
+        tLines.forEach((line,li) => doc.text(line, ML+10, y+3+li*4.5));
+        y += 4 + tLines.length*4.5 + 2;
+      });
+    }
+
+    // FOOTER
+    const pages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= pages; p++) {
+      doc.setPage(p);
+      doc.setFillColor(...CREAM); doc.rect(0, PH-10, PW, 10, 'F');
+      doc.setFontSize(7); doc.setTextColor(...GOLD); doc.setFont('helvetica','bolditalic');
+      doc.text('Paris City Break Planner', ML, PH-4);
+      doc.setFont('helvetica','normal'); doc.setTextColor(150,140,130);
+      doc.text('Page ' + p + ' of ' + pages, PW-MR, PH-4, {align:'right'});
+    }
+
+    doc.save('my-paris-trip.pdf');
+
+  } catch(e) {
+    console.error(e);
+    alert('PDF generation failed: ' + e.message);
+  }
+
+  if (btn) { btn.textContent = 'Save as PDF'; btn.disabled = false; }
+}
+
+// ══ INIT ══
+// Clear stale localStorage if schema version mismatch
+const SCHEMA_VERSION = 4;
+try {
+  const stored = localStorage.getItem('pcp_state');
+  if (stored) {
+    const parsed = JSON.parse(stored);
+    if (!parsed._v || parsed._v < SCHEMA_VERSION) {
+      // Keep masterSelection if it looks valid, reset everything else
+      const savedMaster = Array.isArray(parsed.masterSelection) ? parsed.masterSelection : [];
+      localStorage.removeItem('pcp_state');
+      if (savedMaster.length > 0) {
+        state.masterSelection = savedMaster;
+        saveState();
+      }
+    }
+  }
+} catch(e) { localStorage.removeItem('pcp_state'); }
+
+// Always stamp version
+state._v = SCHEMA_VERSION;
+
+loadState();
+restoreUI();
 </script>
 </body>
 </html>
